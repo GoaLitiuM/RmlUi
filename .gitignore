@@ -1,0 +1,22 @@
+# Ignore Flax project files
+/Binaries/
+/Cache/
+/Logs/
+/Output/
+/Screenshots/
+*.HotReload.*
+Source/*.csproj
+Source/obj/
+/*.sln
+
+# Ignore thumbnails created by Windows
+Thumbs.db
+
+# Ignore files built by Visual Studio
+_ReSharper*/
+.vs/
+.idea/
+
+# Ignore Nuget packages folder
+packages/
+Source/Properties/launchSettings.json
