@@ -40,10 +40,10 @@ namespace
 
 IMPLEMENT_GAME_SETTINGS_GETTER(RmlUiSettings, "RmlUi");
 
-PluginDescription GetPluginDescription()
+PluginDescription GetPluginDescription(bool isEditorPlugin)
 {
     PluginDescription description;
-    description.Name = TEXT("RmlUi");
+    description.Name = String::Format(TEXT("RmlUi{0}"), isEditorPlugin ? TEXT(" (Editor Plugin)") : TEXT(""));
     description.Version = RMLUI_PLUGIN_VERSION;
     description.IsAlpha = true;
     description.Category = TEXT("GUI");
@@ -58,7 +58,7 @@ PluginDescription GetPluginDescription()
 RmlUiPlugin::RmlUiPlugin(const SpawnParams& params)
     : GamePlugin(params)
 {
-    _description = GetPluginDescription();
+    _description = GetPluginDescription(false);
 }
 
 void RmlUiPlugin::Initialize()
@@ -99,7 +99,7 @@ bool RmlUiPlugin::IsInitialized()
 RmlUiEditorPlugin::RmlUiEditorPlugin(const SpawnParams& params)
     : EditorPlugin(params)
 {
-    _description = GetPluginDescription();
+    _description = GetPluginDescription(true);
 }
 
 void RmlUiEditorPlugin::Initialize()
