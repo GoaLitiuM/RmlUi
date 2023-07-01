@@ -1,4 +1,4 @@
-﻿#include "RmlUi.h"
+﻿#include "RmlUiPlugin.h"
 
 // Conflicts with both Flax and RmlUi Math.h
 #undef RadiansToDegrees
@@ -55,13 +55,13 @@ PluginDescription GetPluginDescription()
     return description;
 }
 
-RmlUi::RmlUi(const SpawnParams& params)
+RmlUiPlugin::RmlUiPlugin(const SpawnParams& params)
     : GamePlugin(params)
 {
     _description = GetPluginDescription();
 }
 
-void RmlUi::Initialize()
+void RmlUiPlugin::Initialize()
 {
 #if !USE_EDITOR
     RmlUi::InitializeRmlUi();
@@ -69,7 +69,7 @@ void RmlUi::Initialize()
     GamePlugin::Initialize();
 }
 
-void RmlUi::Deinitialize()
+void RmlUiPlugin::Deinitialize()
 {
 #if !USE_EDITOR
     RmlUi::DeinitializeRmlUi();
@@ -78,7 +78,7 @@ void RmlUi::Deinitialize()
 }
 
 #if USE_EDITOR
-Array<Guid> RmlUi::GetReferences() const
+Array<Guid> RmlUiPlugin::GetReferences() const
 {
     Array<Guid> references;
 
@@ -90,7 +90,7 @@ Array<Guid> RmlUi::GetReferences() const
 }
 #endif
 
-bool RmlUi::IsInitialized()
+bool RmlUiPlugin::IsInitialized()
 {
     return RmlUiInitialized;
 }
@@ -106,18 +106,18 @@ void RmlUiEditorPlugin::Initialize()
 {
     RegisterRmlUiImporters();
 
-    RmlUi::InitializeRmlUi();
+    RmlUiPlugin::InitializeRmlUi();
     EditorPlugin::Initialize();
 }
 
 void RmlUiEditorPlugin::Deinitialize()
 {
-    RmlUi::DeinitializeRmlUi();
+    RmlUiPlugin::DeinitializeRmlUi();
     EditorPlugin::Deinitialize();
 }
 #endif
 
-void RmlUi::InitializeRmlUi()
+void RmlUiPlugin::InitializeRmlUi()
 {
     if (RmlUiInitialized)
         return;
@@ -142,7 +142,7 @@ void RmlUi::InitializeRmlUi()
     RegisterEvents();
 }
 
-void RmlUi::DeinitializeRmlUi()
+void RmlUiPlugin::DeinitializeRmlUi()
 {
     if (!RmlUiInitialized)
         return;
@@ -165,51 +165,51 @@ void RmlUi::DeinitializeRmlUi()
     Canvases.Clear();
 }
 
-void RmlUi::RegisterCanvas(RmlUiCanvas* canvas)
+void RmlUiPlugin::RegisterCanvas(RmlUiCanvas* canvas)
 {
     Canvases.Add(canvas);
 }
 
-void RmlUi::UnregisterCanvas(RmlUiCanvas* canvas)
+void RmlUiPlugin::UnregisterCanvas(RmlUiCanvas* canvas)
 {
     Canvases.Remove(canvas);
     if (FocusedCanvas == canvas)
         DefocusCanvas(canvas);
 }
 
-RmlUiCanvas* RmlUi::GetFocusedCanvas()
+RmlUiCanvas* RmlUiPlugin::GetFocusedCanvas()
 {
     return FocusedCanvas;
 }
 
-void RmlUi::FocusCanvas(RmlUiCanvas* canvas)
+void RmlUiPlugin::FocusCanvas(RmlUiCanvas* canvas)
 {
     FocusedCanvas = canvas;
 }
 
-void RmlUi::DefocusCanvas(RmlUiCanvas* canvas)
+void RmlUiPlugin::DefocusCanvas(RmlUiCanvas* canvas)
 {
     if (FocusedCanvas == canvas)
         FocusedCanvas = nullptr;
 }
 
-void RmlUi::RegisterEvents()
+void RmlUiPlugin::RegisterEvents()
 {
-    Engine::LateUpdate.Bind(&RmlUi::Update);
-    MainRenderTask::Instance->PostRender.Bind(&RmlUi::Render);
+    Engine::LateUpdate.Bind(&RmlUiPlugin::Update);
+    MainRenderTask::Instance->PostRender.Bind(&RmlUiPlugin::Render);
 
     if (Engine::MainWindow != nullptr)
         RegisterWindowEvents();
     else
     {
         // Editor plugins are initialized before the main window is created, handle registration during next frame
-        Engine::Update.Bind(&RmlUi::RegisterWindowEvents);
+        Engine::Update.Bind(&RmlUiPlugin::RegisterWindowEvents);
     }
 }
 
-void RmlUi::RegisterWindowEvents()
+void RmlUiPlugin::RegisterWindowEvents()
 {
-    Engine::Update.Unbind(&RmlUi::RegisterWindowEvents);
+    Engine::Update.Unbind(&RmlUiPlugin::RegisterWindowEvents);
 
 #if USE_EDITOR
     // Register events for floating game window
@@ -217,41 +217,41 @@ void RmlUi::RegisterWindowEvents()
     auto gameWindow = GetEditorGameWindow();
     if (gameWindow != nullptr)
     {
-        gameWindow->CharInput.Bind(RmlUi::OnCharInputGameWindow);
-        gameWindow->KeyDown.Bind(RmlUi::OnKeyDownGameWindow);
-        gameWindow->KeyUp.Bind(RmlUi::OnKeyUpGameWindow);
-        gameWindow->MouseDown.Bind(RmlUi::OnMouseDownGameWindow);
-        gameWindow->MouseUp.Bind(RmlUi::OnMouseUpGameWindow);
-        gameWindow->MouseDoubleClick.Bind(RmlUi::OnMouseDoubleClickGameWindow);
-        gameWindow->MouseWheel.Bind(RmlUi::OnMouseWheelGameWindow);
-        gameWindow->MouseMove.Bind(RmlUi::OnMouseMoveGameWindow);
-        gameWindow->MouseLeave.Bind(RmlUi::OnMouseLeaveGameWindow);
-        gameWindow->TouchDown.Bind(RmlUi::OnTouchDownGameWindow);
-        gameWindow->TouchMove.Bind(RmlUi::OnTouchMoveGameWindow);
-        gameWindow->TouchUp.Bind(RmlUi::OnTouchUpGameWindow);
+        gameWindow->CharInput.Bind(RmlUiPlugin::OnCharInputGameWindow);
+        gameWindow->KeyDown.Bind(RmlUiPlugin::OnKeyDownGameWindow);
+        gameWindow->KeyUp.Bind(RmlUiPlugin::OnKeyUpGameWindow);
+        gameWindow->MouseDown.Bind(RmlUiPlugin::OnMouseDownGameWindow);
+        gameWindow->MouseUp.Bind(RmlUiPlugin::OnMouseUpGameWindow);
+        gameWindow->MouseDoubleClick.Bind(RmlUiPlugin::OnMouseDoubleClickGameWindow);
+        gameWindow->MouseWheel.Bind(RmlUiPlugin::OnMouseWheelGameWindow);
+        gameWindow->MouseMove.Bind(RmlUiPlugin::OnMouseMoveGameWindow);
+        gameWindow->MouseLeave.Bind(RmlUiPlugin::OnMouseLeaveGameWindow);
+        gameWindow->TouchDown.Bind(RmlUiPlugin::OnTouchDownGameWindow);
+        gameWindow->TouchMove.Bind(RmlUiPlugin::OnTouchMoveGameWindow);
+        gameWindow->TouchUp.Bind(RmlUiPlugin::OnTouchUpGameWindow);
     }
 #endif
     {
-        Engine::MainWindow->CharInput.Bind(RmlUi::OnCharInput);
-        Engine::MainWindow->KeyDown.Bind(RmlUi::OnKeyDown);
-        Engine::MainWindow->KeyUp.Bind(RmlUi::OnKeyUp);
-        Engine::MainWindow->MouseDown.Bind(RmlUi::OnMouseDown);
-        Engine::MainWindow->MouseUp.Bind(RmlUi::OnMouseUp);
-        Engine::MainWindow->MouseDoubleClick.Bind(RmlUi::OnMouseDoubleClick);
-        Engine::MainWindow->MouseWheel.Bind(RmlUi::OnMouseWheel);
-        Engine::MainWindow->MouseMove.Bind(RmlUi::OnMouseMove);
-        Engine::MainWindow->MouseLeave.Bind(RmlUi::OnMouseLeave);
-        Engine::MainWindow->TouchDown.Bind(RmlUi::OnTouchDown);
-        Engine::MainWindow->TouchMove.Bind(RmlUi::OnTouchMove);
-        Engine::MainWindow->TouchUp.Bind(RmlUi::OnTouchUp);
+        Engine::MainWindow->CharInput.Bind(RmlUiPlugin::OnCharInput);
+        Engine::MainWindow->KeyDown.Bind(RmlUiPlugin::OnKeyDown);
+        Engine::MainWindow->KeyUp.Bind(RmlUiPlugin::OnKeyUp);
+        Engine::MainWindow->MouseDown.Bind(RmlUiPlugin::OnMouseDown);
+        Engine::MainWindow->MouseUp.Bind(RmlUiPlugin::OnMouseUp);
+        Engine::MainWindow->MouseDoubleClick.Bind(RmlUiPlugin::OnMouseDoubleClick);
+        Engine::MainWindow->MouseWheel.Bind(RmlUiPlugin::OnMouseWheel);
+        Engine::MainWindow->MouseMove.Bind(RmlUiPlugin::OnMouseMove);
+        Engine::MainWindow->MouseLeave.Bind(RmlUiPlugin::OnMouseLeave);
+        Engine::MainWindow->TouchDown.Bind(RmlUiPlugin::OnTouchDown);
+        Engine::MainWindow->TouchMove.Bind(RmlUiPlugin::OnTouchMove);
+        Engine::MainWindow->TouchUp.Bind(RmlUiPlugin::OnTouchUp);
     }
 }
 
-void RmlUi::UnregisterEvents()
+void RmlUiPlugin::UnregisterEvents()
 {
-    Engine::LateUpdate.Unbind(&RmlUi::Update);
+    Engine::LateUpdate.Unbind(&RmlUiPlugin::Update);
     if (MainRenderTask::Instance != nullptr)
-        MainRenderTask::Instance->PostRender.Unbind(&RmlUi::Render);
+        MainRenderTask::Instance->PostRender.Unbind(&RmlUiPlugin::Render);
 
 #if USE_EDITOR
     // Register events for floating game window
@@ -259,38 +259,38 @@ void RmlUi::UnregisterEvents()
     auto gameWindow = GetEditorGameWindow();
     if (gameWindow != nullptr)
     {
-        gameWindow->CharInput.Unbind(RmlUi::OnCharInputGameWindow);
-        gameWindow->KeyDown.Unbind(RmlUi::OnKeyDownGameWindow);
-        gameWindow->KeyUp.Unbind(RmlUi::OnKeyUpGameWindow);
-        gameWindow->MouseDown.Unbind(RmlUi::OnMouseDownGameWindow);
-        gameWindow->MouseUp.Unbind(RmlUi::OnMouseUpGameWindow);
-        gameWindow->MouseDoubleClick.Unbind(RmlUi::OnMouseDoubleClickGameWindow);
-        gameWindow->MouseWheel.Unbind(RmlUi::OnMouseWheelGameWindow);
-        gameWindow->MouseMove.Unbind(RmlUi::OnMouseMoveGameWindow);
-        gameWindow->MouseLeave.Unbind(RmlUi::OnMouseLeaveGameWindow);
-        gameWindow->TouchDown.Unbind(RmlUi::OnTouchDownGameWindow);
-        gameWindow->TouchMove.Unbind(RmlUi::OnTouchMoveGameWindow);
-        gameWindow->TouchUp.Unbind(RmlUi::OnTouchUpGameWindow);
+        gameWindow->CharInput.Unbind(RmlUiPlugin::OnCharInputGameWindow);
+        gameWindow->KeyDown.Unbind(RmlUiPlugin::OnKeyDownGameWindow);
+        gameWindow->KeyUp.Unbind(RmlUiPlugin::OnKeyUpGameWindow);
+        gameWindow->MouseDown.Unbind(RmlUiPlugin::OnMouseDownGameWindow);
+        gameWindow->MouseUp.Unbind(RmlUiPlugin::OnMouseUpGameWindow);
+        gameWindow->MouseDoubleClick.Unbind(RmlUiPlugin::OnMouseDoubleClickGameWindow);
+        gameWindow->MouseWheel.Unbind(RmlUiPlugin::OnMouseWheelGameWindow);
+        gameWindow->MouseMove.Unbind(RmlUiPlugin::OnMouseMoveGameWindow);
+        gameWindow->MouseLeave.Unbind(RmlUiPlugin::OnMouseLeaveGameWindow);
+        gameWindow->TouchDown.Unbind(RmlUiPlugin::OnTouchDownGameWindow);
+        gameWindow->TouchMove.Unbind(RmlUiPlugin::OnTouchMoveGameWindow);
+        gameWindow->TouchUp.Unbind(RmlUiPlugin::OnTouchUpGameWindow);
     }
 #endif
     if (Engine::MainWindow != nullptr)
     {
-        Engine::MainWindow->CharInput.Unbind(RmlUi::OnCharInput);
-        Engine::MainWindow->KeyDown.Unbind(RmlUi::OnKeyDown);
-        Engine::MainWindow->KeyUp.Unbind(RmlUi::OnKeyUp);
-        Engine::MainWindow->MouseDown.Unbind(RmlUi::OnMouseDown);
-        Engine::MainWindow->MouseUp.Unbind(RmlUi::OnMouseUp);
-        Engine::MainWindow->MouseDoubleClick.Unbind(RmlUi::OnMouseDoubleClick);
-        Engine::MainWindow->MouseWheel.Unbind(RmlUi::OnMouseWheel);
-        Engine::MainWindow->MouseMove.Unbind(RmlUi::OnMouseMove);
-        Engine::MainWindow->MouseLeave.Unbind(RmlUi::OnMouseLeave);
-        Engine::MainWindow->TouchDown.Unbind(RmlUi::OnTouchDown);
-        Engine::MainWindow->TouchMove.Unbind(RmlUi::OnTouchMove);
-        Engine::MainWindow->TouchUp.Unbind(RmlUi::OnTouchUp);
+        Engine::MainWindow->CharInput.Unbind(RmlUiPlugin::OnCharInput);
+        Engine::MainWindow->KeyDown.Unbind(RmlUiPlugin::OnKeyDown);
+        Engine::MainWindow->KeyUp.Unbind(RmlUiPlugin::OnKeyUp);
+        Engine::MainWindow->MouseDown.Unbind(RmlUiPlugin::OnMouseDown);
+        Engine::MainWindow->MouseUp.Unbind(RmlUiPlugin::OnMouseUp);
+        Engine::MainWindow->MouseDoubleClick.Unbind(RmlUiPlugin::OnMouseDoubleClick);
+        Engine::MainWindow->MouseWheel.Unbind(RmlUiPlugin::OnMouseWheel);
+        Engine::MainWindow->MouseMove.Unbind(RmlUiPlugin::OnMouseMove);
+        Engine::MainWindow->MouseLeave.Unbind(RmlUiPlugin::OnMouseLeave);
+        Engine::MainWindow->TouchDown.Unbind(RmlUiPlugin::OnTouchDown);
+        Engine::MainWindow->TouchMove.Unbind(RmlUiPlugin::OnTouchMove);
+        Engine::MainWindow->TouchUp.Unbind(RmlUiPlugin::OnTouchUp);
     }
 }
 
-void RmlUi::OnCharInput(Char c)
+void RmlUiPlugin::OnCharInput(Char c)
 {
     PROFILE_CPU();
 
@@ -303,7 +303,7 @@ void RmlUi::OnCharInput(Char c)
         FocusedCanvas->OnCharInput(c);
 }
 
-void RmlUi::OnKeyDown(KeyboardKeys key)
+void RmlUiPlugin::OnKeyDown(KeyboardKeys key)
 {
     PROFILE_CPU();
 
@@ -316,7 +316,7 @@ void RmlUi::OnKeyDown(KeyboardKeys key)
         FocusedCanvas->OnKeyDown(key);
 }
 
-void RmlUi::OnKeyUp(KeyboardKeys key)
+void RmlUiPlugin::OnKeyUp(KeyboardKeys key)
 {
     PROFILE_CPU();
 
@@ -329,7 +329,7 @@ void RmlUi::OnKeyUp(KeyboardKeys key)
         FocusedCanvas->OnKeyUp(key);
 }
 
-void RmlUi::OnMouseDown(const Float2& mousePosition, MouseButton button)
+void RmlUiPlugin::OnMouseDown(const Float2& mousePosition, MouseButton button)
 {
     PROFILE_CPU();
 
@@ -351,7 +351,7 @@ void RmlUi::OnMouseDown(const Float2& mousePosition, MouseButton button)
         FocusedCanvas->OnMouseDown(realPosition, button);
 }
 
-void RmlUi::OnMouseUp(const Float2& mousePosition, MouseButton button)
+void RmlUiPlugin::OnMouseUp(const Float2& mousePosition, MouseButton button)
 {
     PROFILE_CPU();
 
@@ -373,7 +373,7 @@ void RmlUi::OnMouseUp(const Float2& mousePosition, MouseButton button)
         FocusedCanvas->OnMouseUp(realPosition, button);
 }
 
-void RmlUi::OnMouseDoubleClick(const Float2& mousePosition, MouseButton button)
+void RmlUiPlugin::OnMouseDoubleClick(const Float2& mousePosition, MouseButton button)
 {
     PROFILE_CPU();
 
@@ -395,7 +395,7 @@ void RmlUi::OnMouseDoubleClick(const Float2& mousePosition, MouseButton button)
     //    focusedCanvas->OnMouseDown(realPosition, button);
 }
 
-void RmlUi::OnMouseWheel(const Float2& mousePosition, float delta)
+void RmlUiPlugin::OnMouseWheel(const Float2& mousePosition, float delta)
 {
     PROFILE_CPU();
 
@@ -417,7 +417,7 @@ void RmlUi::OnMouseWheel(const Float2& mousePosition, float delta)
         FocusedCanvas->OnMouseWheel(realPosition, -delta);
 }
 
-void RmlUi::OnMouseMove(const Float2& mousePosition)
+void RmlUiPlugin::OnMouseMove(const Float2& mousePosition)
 {
     PROFILE_CPU();
 
@@ -439,7 +439,7 @@ void RmlUi::OnMouseMove(const Float2& mousePosition)
         FocusedCanvas->OnMouseMove(realPosition);
 }
 
-void RmlUi::OnMouseLeave()
+void RmlUiPlugin::OnMouseLeave()
 {
     PROFILE_CPU();
 
@@ -452,7 +452,7 @@ void RmlUi::OnMouseLeave()
         FocusedCanvas->OnMouseLeave();
 }
 
-void RmlUi::OnTouchDown(const Float2& pointerPosition, int32 pointerIndex)
+void RmlUiPlugin::OnTouchDown(const Float2& pointerPosition, int32 pointerIndex)
 {
     PROFILE_CPU();
 
@@ -474,7 +474,7 @@ void RmlUi::OnTouchDown(const Float2& pointerPosition, int32 pointerIndex)
         FocusedCanvas->OnTouchDown(realPosition, pointerIndex);
 }
 
-void RmlUi::OnTouchMove(const Float2& pointerPosition, int32 pointerIndex)
+void RmlUiPlugin::OnTouchMove(const Float2& pointerPosition, int32 pointerIndex)
 {
     PROFILE_CPU();
 
@@ -496,7 +496,7 @@ void RmlUi::OnTouchMove(const Float2& pointerPosition, int32 pointerIndex)
         FocusedCanvas->OnTouchMove(realPosition, pointerIndex);
 }
 
-void RmlUi::OnTouchUp(const Float2& pointerPosition, int32 pointerIndex)
+void RmlUiPlugin::OnTouchUp(const Float2& pointerPosition, int32 pointerIndex)
 {
     PROFILE_CPU();
 
@@ -519,7 +519,7 @@ void RmlUi::OnTouchUp(const Float2& pointerPosition, int32 pointerIndex)
 }
 
 #if USE_EDITOR
-void RmlUi::OnCharInputGameWindow(Char c)
+void RmlUiPlugin::OnCharInputGameWindow(Char c)
 {
     PROFILE_CPU();
 
@@ -530,7 +530,7 @@ void RmlUi::OnCharInputGameWindow(Char c)
         FocusedCanvas->OnCharInput(c);
 }
 
-void RmlUi::OnKeyDownGameWindow(KeyboardKeys key)
+void RmlUiPlugin::OnKeyDownGameWindow(KeyboardKeys key)
 {
     PROFILE_CPU();
 
@@ -541,7 +541,7 @@ void RmlUi::OnKeyDownGameWindow(KeyboardKeys key)
         FocusedCanvas->OnKeyDown(key);
 }
 
-void RmlUi::OnKeyUpGameWindow(KeyboardKeys key)
+void RmlUiPlugin::OnKeyUpGameWindow(KeyboardKeys key)
 {
     PROFILE_CPU();
 
@@ -552,7 +552,7 @@ void RmlUi::OnKeyUpGameWindow(KeyboardKeys key)
         FocusedCanvas->OnKeyUp(key);
 }
 
-void RmlUi::OnMouseDownGameWindow(const Float2& mousePosition, MouseButton button)
+void RmlUiPlugin::OnMouseDownGameWindow(const Float2& mousePosition, MouseButton button)
 {
     PROFILE_CPU();
 
@@ -566,7 +566,7 @@ void RmlUi::OnMouseDownGameWindow(const Float2& mousePosition, MouseButton butto
         FocusedCanvas->OnMouseDown(realPosition, button);
 }
 
-void RmlUi::OnMouseUpGameWindow(const Float2& mousePosition, MouseButton button)
+void RmlUiPlugin::OnMouseUpGameWindow(const Float2& mousePosition, MouseButton button)
 {
     PROFILE_CPU();
 
@@ -580,7 +580,7 @@ void RmlUi::OnMouseUpGameWindow(const Float2& mousePosition, MouseButton button)
         FocusedCanvas->OnMouseUp(realPosition, button);
 }
 
-void RmlUi::OnMouseDoubleClickGameWindow(const Float2& mousePosition, MouseButton button)
+void RmlUiPlugin::OnMouseDoubleClickGameWindow(const Float2& mousePosition, MouseButton button)
 {
     PROFILE_CPU();
 
@@ -594,7 +594,7 @@ void RmlUi::OnMouseDoubleClickGameWindow(const Float2& mousePosition, MouseButto
     //    focusedCanvas->OnMouseDown(pointerPosition, button);
 }
 
-void RmlUi::OnMouseWheelGameWindow(const Float2& mousePosition, float delta)
+void RmlUiPlugin::OnMouseWheelGameWindow(const Float2& mousePosition, float delta)
 {
     PROFILE_CPU();
 
@@ -605,7 +605,7 @@ void RmlUi::OnMouseWheelGameWindow(const Float2& mousePosition, float delta)
         FocusedCanvas->OnMouseWheel(mousePosition, -delta);
 }
 
-void RmlUi::OnMouseMoveGameWindow(const Float2& mousePosition)
+void RmlUiPlugin::OnMouseMoveGameWindow(const Float2& mousePosition)
 {
     PROFILE_CPU();
 
@@ -623,7 +623,7 @@ void RmlUi::OnMouseMoveGameWindow(const Float2& mousePosition)
         FocusedCanvas->OnMouseMove(realPosition);
 }
 
-void RmlUi::OnMouseLeaveGameWindow()
+void RmlUiPlugin::OnMouseLeaveGameWindow()
 {
     PROFILE_CPU();
 
@@ -634,7 +634,7 @@ void RmlUi::OnMouseLeaveGameWindow()
         FocusedCanvas->OnMouseLeave();
 }
 
-void RmlUi::OnTouchDownGameWindow(const Float2& pointerPosition, int32 pointerIndex)
+void RmlUiPlugin::OnTouchDownGameWindow(const Float2& pointerPosition, int32 pointerIndex)
 {
     PROFILE_CPU();
 
@@ -648,7 +648,7 @@ void RmlUi::OnTouchDownGameWindow(const Float2& pointerPosition, int32 pointerIn
         FocusedCanvas->OnTouchDown(realPosition, pointerIndex);
 }
 
-void RmlUi::OnTouchMoveGameWindow(const Float2& pointerPosition, int32 pointerIndex)
+void RmlUiPlugin::OnTouchMoveGameWindow(const Float2& pointerPosition, int32 pointerIndex)
 {
     PROFILE_CPU();
 
@@ -662,7 +662,7 @@ void RmlUi::OnTouchMoveGameWindow(const Float2& pointerPosition, int32 pointerIn
         FocusedCanvas->OnTouchMove(pointerPosition, pointerIndex);
 }
 
-void RmlUi::OnTouchUpGameWindow(const Float2& pointerPosition, int32 pointerIndex)
+void RmlUiPlugin::OnTouchUpGameWindow(const Float2& pointerPosition, int32 pointerIndex)
 {
     PROFILE_CPU();
 
@@ -677,7 +677,7 @@ void RmlUi::OnTouchUpGameWindow(const Float2& pointerPosition, int32 pointerInde
 }
 #endif
 
-void RmlUi::Update()
+void RmlUiPlugin::Update()
 {
     PROFILE_CPU_NAMED("RmlUi.Update");
 
@@ -688,7 +688,7 @@ void RmlUi::Update()
     }
 }
 
-void RmlUi::Render(GPUContext* gpuContext, RenderContext& renderContext)
+void RmlUiPlugin::Render(GPUContext* gpuContext, RenderContext& renderContext)
 {
     PROFILE_GPU_CPU_NAMED("RmlUi.Render");
 

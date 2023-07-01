@@ -1,4 +1,4 @@
-﻿#include "RmlUi.h"
+﻿#include "RmlUiPlugin.h"
 #include "RmlUiCanvas.h"
 #include "RmlUiDocument.h"
 
@@ -39,7 +39,7 @@ void RmlUiDocument::Show() const
 
 void RmlUiDocument::Hide() const
 {
-    if (!RmlUi::IsInitialized())
+    if (!RmlUiPlugin::IsInitialized())
         return;
     if (elementDocument == nullptr)
         return;
@@ -49,7 +49,7 @@ void RmlUiDocument::Hide() const
 
 void RmlUiDocument::Close() const
 {
-    if (!RmlUi::IsInitialized())
+    if (!RmlUiPlugin::IsInitialized())
         return;
     if (elementDocument == nullptr)
         return;
@@ -69,14 +69,14 @@ void RmlUiDocument::Focus() const
 {
     RmlUiCanvas* canvas = GetCanvas();
     if (canvas != nullptr)
-        RmlUi::FocusCanvas(canvas);
+        RmlUiPlugin::FocusCanvas(canvas);
 }
 
 void RmlUiDocument::Defocus() const
 {
     RmlUiCanvas* canvas = GetCanvas();
     if (canvas != nullptr)
-        RmlUi::DefocusCanvas(canvas);
+        RmlUiPlugin::DefocusCanvas(canvas);
 }
 
 RmlUiCanvas* RmlUiDocument::GetCanvas() const
@@ -134,7 +134,7 @@ bool RmlUiDocument::LoadDocument()
 
 void RmlUiDocument::UnloadDocument()
 {
-    if (!RmlUi::IsInitialized())
+    if (!RmlUiPlugin::IsInitialized())
         return;
 
     Rml::Context* context = GetContext();

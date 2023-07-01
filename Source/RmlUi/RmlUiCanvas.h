@@ -18,7 +18,7 @@ namespace Rml
 API_CLASS(Sealed, NoConstructor, Attributes="ActorContextMenu(\"New/UI/RmlUi Canvas\"), ActorToolbox(\"GUI\")")
 class RMLUI_API RmlUiCanvas : public Actor
 {
-    friend class RmlUi;
+    friend class RmlUiPlugin;
 
     API_AUTO_SERIALIZATION();
     DECLARE_SCENE_OBJECT(RmlUiCanvas);

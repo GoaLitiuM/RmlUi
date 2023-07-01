@@ -29,9 +29,9 @@ API_CLASS() class RmlUiSettings : public SettingsBase
 /// <summary>
 /// RmlUi plugin.
 /// </summary>
-API_CLASS() class RMLUI_API RmlUi : public GamePlugin
+API_CLASS() class RMLUI_API RmlUiPlugin : public GamePlugin
 {
-    DECLARE_SCRIPTING_TYPE(RmlUi);
+    DECLARE_SCRIPTING_TYPE(RmlUiPlugin);
 
 public:
     // [GamePlugin]

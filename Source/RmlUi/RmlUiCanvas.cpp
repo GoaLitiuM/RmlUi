@@ -1,5 +1,5 @@
 ﻿#include "RmlUiCanvas.h"
-#include "RmlUi.h"
+#include "RmlUiPlugin.h"
 #include "RmlUiHelpers.h"
 
 // Conflicts with both Flax and RmlUi Math.h
@@ -27,7 +27,7 @@ Rml::Context* RmlUiCanvas::GetContext() const
 
 bool RmlUiCanvas::HasFocus() const
 {
-    return RmlUi::GetFocusedCanvas() == this;
+    return RmlUiPlugin::GetFocusedCanvas() == this;
 }
 
 void RmlUiCanvas::BeginPlay(SceneBeginData* data)
@@ -55,7 +55,7 @@ void RmlUiCanvas::BeginPlay(SceneBeginData* data)
 
     context->SetDensityIndependentPixelRatio(Platform::GetDpiScale());
 
-    RmlUi::RegisterCanvas(this);
+    RmlUiPlugin::RegisterCanvas(this);
 
     Actor::BeginPlay(data);
 }
@@ -64,7 +64,7 @@ void RmlUiCanvas::EndPlay()
 {
     Actor::EndPlay();
 
-    if (RmlUi::IsInitialized())
+    if (RmlUiPlugin::IsInitialized())
     {
         if (EnableDebugger && DebuggerKey != KeyboardKeys::None)
             Rml::Debugger::Shutdown();
@@ -74,7 +74,7 @@ void RmlUiCanvas::EndPlay()
             Rml::RemoveContext(context->GetName());
             context = nullptr;
         }
-        RmlUi::UnregisterCanvas(this);
+        RmlUiPlugin::UnregisterCanvas(this);
     }
 }
 
