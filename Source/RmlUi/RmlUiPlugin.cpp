@@ -8,10 +8,10 @@
 #include "RmlUiCanvas.h"
 #include "RmlUiImport.h"
 #include "RmlUiHelpers.h"
-#include "FlaxSystemInterface.h"
-#include "FlaxFileInterface.h"
-#include "FlaxRenderInterface.h"
-#include "FlaxFontEngineInterface.h"
+#include "Flax/FlaxSystemInterface.h"
+#include "Flax/FlaxFileInterface.h"
+#include "Flax/FlaxRenderInterface.h"
+#include "Flax/FlaxFontEngineInterface.h"
 
 #include <ThirdParty/RmlUi/Core/Context.h>
 #include <ThirdParty/RmlUi/Core/ElementDocument.h>
