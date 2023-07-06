@@ -60,7 +60,5 @@ public class RmlUi : GameModule
         // TODO: Check support in other platforms
         if (options.Platform.Target != TargetPlatform.Windows)
             throw new InvalidPlatformException(options.Platform.Target);
-        if (options.Architecture != TargetArchitecture.x64)
-            throw new InvalidArchitectureException(options.Architecture);
     }
 }
