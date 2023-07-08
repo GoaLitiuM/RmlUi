@@ -64,7 +64,7 @@ RmlUiPlugin::RmlUiPlugin(const SpawnParams& params)
 void RmlUiPlugin::Initialize()
 {
 #if !USE_EDITOR
-    RmlUi::InitializeRmlUi();
+    InitializeRmlUi();
 #endif
     GamePlugin::Initialize();
 }
@@ -72,7 +72,7 @@ void RmlUiPlugin::Initialize()
 void RmlUiPlugin::Deinitialize()
 {
 #if !USE_EDITOR
-    RmlUi::DeinitializeRmlUi();
+    DeinitializeRmlUi();
 #endif
     GamePlugin::Deinitialize();
 }
