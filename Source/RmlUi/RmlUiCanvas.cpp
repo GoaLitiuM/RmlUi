@@ -10,8 +10,9 @@
 #include <ThirdParty/RmlUi/Core/Context.h>
 #include <ThirdParty/RmlUi/Core/Core.h>
 #include <ThirdParty/RmlUi/Core/FontEngineInterface.h>
+#if USE_EDITOR
 #include <ThirdParty/RmlUi/Debugger.h>
-
+#endif
 #include <Engine/Engine/Screen.h>
 #include <Engine/Profiler/ProfilerCPU.h>
 
@@ -49,10 +50,10 @@ void RmlUiCanvas::BeginPlay(SceneBeginData* data)
         Rml::String fontPath(fontPathAnsi.Get(), fontPathAnsi.Length());
         fontEngineInterface->LoadFontFace(fontPath, font.UseAsFallbackFont, Rml::Style::FontWeight::Auto);
     }
-
+#if USE_EDITOR
     if (EnableDebugger && DebuggerKey != KeyboardKeys::None)
         Rml::Debugger::Initialise(context);
-
+#endif
     context->SetDensityIndependentPixelRatio(Platform::GetDpiScale());
 
     RmlUiPlugin::RegisterCanvas(this);
@@ -66,9 +67,10 @@ void RmlUiCanvas::EndPlay()
 
     if (RmlUiPlugin::IsInitialized())
     {
+#if USE_EDITOR
         if (EnableDebugger && DebuggerKey != KeyboardKeys::None)
             Rml::Debugger::Shutdown();
-
+#endif
         if (context != nullptr)
         {
             Rml::RemoveContext(context->GetName());
@@ -140,10 +142,10 @@ void RmlUiCanvas::OnKeyUp(KeyboardKeys key) const
         return;
 
     PROFILE_CPU();
-
+#if USE_EDITOR
     if (EnableDebugger && key == DebuggerKey)
         Rml::Debugger::SetVisible(!Rml::Debugger::IsVisible());
-
+#endif
     context->ProcessKeyUp(TranslateFlaxKey(key), GetInputModifiers());
 }
 
