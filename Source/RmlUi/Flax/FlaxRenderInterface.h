@@ -34,6 +34,7 @@ public:
 
 public:
     Viewport GetViewport();
+    GPUTexture* RegisterDynamicTexture(String name);
     void SetViewport(int width, int height);
     void InvalidateShaders(Asset* obj = nullptr);
     void Begin(RenderContext* renderContext, GPUContext* context, Viewport viewport);

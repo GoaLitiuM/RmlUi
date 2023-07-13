@@ -111,6 +111,7 @@ namespace
     Array<GPUTexture*> LoadedTextures(32);
     Array<GPUTexture*> AllocatedTextures(32);
     HashSet<GPUTexture*> FontTextures(32);
+    Dictionary<String, GPUTexture*> DynamicTextures(4);
 #if !USE_RMLUI_6_0
     Dictionary<byte*, Rml::TextureHandle> AtlasGenerateTextureHandles;
 #endif
@@ -332,12 +333,23 @@ void FlaxRenderInterface::SetScissorRegion(int x, int y, int width, int height)
 
 bool FlaxRenderInterface::LoadTexture(Rml::TextureHandle& texture_handle, Rml::Vector2i& texture_dimensions, const Rml::String& source)
 {
+    GPUTexture* texture;
+    if (DynamicTextures.TryGet(String(source.c_str()), texture))
+    {
+        Float2 textureSize = texture->Size();
+        texture_dimensions.x = (int)textureSize.X;
+        texture_dimensions.y = (int)textureSize.Y;
+
+        texture_handle = RegisterTexture(texture);
+        return true;
+    }
+
     String contentPath = String(StringUtils::GetPathWithoutExtension(String(source.c_str()))) + ASSET_FILES_EXTENSION_WITH_DOT;
     AssetReference<Texture> textureAsset = Content::Load<Texture>(contentPath);
     if (textureAsset == nullptr)
         return false;
 
-    GPUTexture* texture = textureAsset.Get()->GetTexture();
+    texture = textureAsset.Get()->GetTexture();
     LoadedTextureAssets.Add(texture, textureAsset);
 
     Float2 textureSize = textureAsset->Size();
@@ -395,6 +407,15 @@ void FlaxRenderInterface::SetTransform(const Rml::Matrix4f* transform_)
 Viewport FlaxRenderInterface::GetViewport()
 {
     return CurrentViewport;
+}
+
+GPUTexture* FlaxRenderInterface::RegisterDynamicTexture(String name)
+{
+    GPUTexture* texture = GPUTexture::New();
+    if (DynamicTextures.ContainsKey(name))
+        return nullptr;
+    DynamicTextures[name] = texture;
+    return texture;
 }
 
 void FlaxRenderInterface::SetViewport(int width, int height)
@@ -460,6 +481,7 @@ void FlaxRenderInterface::ReleaseResources()
     FontTextures.Clear();
     LoadedTextures.Clear();
     AllocatedTextures.ClearDelete();
+    DynamicTextures.ClearDelete();
     GeometryCache.ClearDelete();
 }
 

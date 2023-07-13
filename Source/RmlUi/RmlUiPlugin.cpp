@@ -165,6 +165,11 @@ void RmlUiPlugin::DeinitializeRmlUi()
     Canvases.Clear();
 }
 
+GPUTexture* RmlUiPlugin::RegisterDynamicTexture(String name)
+{
+    return FlaxRenderInterfaceInstance->RegisterDynamicTexture(name);
+}
+
 void RmlUiPlugin::RegisterCanvas(RmlUiCanvas* canvas)
 {
     Canvases.Add(canvas);

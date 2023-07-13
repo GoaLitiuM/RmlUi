@@ -3,6 +3,7 @@
 #include <Engine/Core/Config/Settings.h>
 #include <Engine/Input/Input.h>
 #include <Engine/Scripting/Plugins/GamePlugin.h>
+#include <Engine/Graphics/Textures/GPUTexture.h>
 #if USE_EDITOR
 #include <Engine/Scripting/Plugins/EditorPlugin.h>
 #endif
@@ -61,6 +62,12 @@ public:
     /// Deinitializes RmlUi and all custom interfaces.
     /// </summary>
     static void DeinitializeRmlUi();
+
+    /// <summary>
+    /// Register dynamic GPUTexture for use as an image.
+    /// All dynamic textures should be registered before first RmlUiDocument::LoadDocument.
+    /// </summary>
+    static GPUTexture* RegisterDynamicTexture(String name);
 
     /// <summary>
     /// Register RmlUiCanvas for updates and rendering.
