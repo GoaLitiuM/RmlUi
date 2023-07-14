@@ -38,7 +38,6 @@ public class RmlUi : GameModule
 
 		options.PublicDependencies.Add("Core");
 		options.PublicDependencies.Add("Graphics");
-        options.PrivateDependencies.Add("freetype");
 
         if (options.Target.IsEditor)
         {
