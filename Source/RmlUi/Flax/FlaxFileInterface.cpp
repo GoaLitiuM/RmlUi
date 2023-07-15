@@ -28,7 +28,7 @@ Rml::FileHandle FlaxFileInterface::Open(const Rml::String& path)
     asset->AddReference();
     FlaxChunk* chunk = asset->GetChunk(0);
     Span<byte> span = Span<byte>(chunk->Data.Get(), chunk->Data.Length());
-    AssetSpans.Add(asset, span);
+    AssetSpans[asset] = span;
     return (Rml::FileHandle)asset;
 }
 
