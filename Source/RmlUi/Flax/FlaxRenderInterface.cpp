@@ -411,9 +411,9 @@ Viewport FlaxRenderInterface::GetViewport()
 
 GPUTexture* FlaxRenderInterface::RegisterDynamicTexture(String name)
 {
-    GPUTexture* texture = GPUTexture::New();
     if (DynamicTextures.ContainsKey(name))
         return nullptr;
+    GPUTexture* texture = GPUTexture::New();
     DynamicTextures[name] = texture;
     return texture;
 }
