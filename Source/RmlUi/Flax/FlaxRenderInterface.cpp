@@ -333,14 +333,18 @@ void FlaxRenderInterface::SetScissorRegion(int x, int y, int width, int height)
 bool FlaxRenderInterface::LoadTexture(Rml::TextureHandle& texture_handle, Rml::Vector2i& texture_dimensions, const Rml::String& source)
 {
     Float2 textureSize;
-    GPUTexture* texture = RmlUiPlugin::OnLoadTexture(texture_handle, textureSize, String(source.data(), (int32)source.length()));
-    if (texture)
+    GPUTexture* texture;
+    if (RmlUiPlugin::OnLoadTexture.IsBinded())
     {
-        texture_dimensions.x = (int)textureSize.X;
-        texture_dimensions.y = (int)textureSize.Y;
-        // Using RegisterTexture is not an option here, since it unnecessarily registeres the texture in internal logic.
-        texture_handle = (Rml::TextureHandle)LoadedTextures.Count();
-        return true;
+        texture = RmlUiPlugin::OnLoadTexture(texture_handle, textureSize, String(source.data(), (int32)source.length()));
+        if (texture)
+        {
+            texture_dimensions.x = (int)textureSize.X;
+            texture_dimensions.y = (int)textureSize.Y;
+            // Using RegisterTexture is not an option here, since it unnecessarily registeres the texture in internal logic.
+            texture_handle = (Rml::TextureHandle)LoadedTextures.Count();
+            return true;
+        }
     }
 
     String contentPath = String(StringUtils::GetPathWithoutExtension(String(source.c_str()))) + ASSET_FILES_EXTENSION_WITH_DOT;
@@ -388,7 +392,7 @@ bool FlaxRenderInterface::GenerateTexture(Rml::TextureHandle& texture_handle, co
 
 void FlaxRenderInterface::ReleaseTexture(Rml::TextureHandle texture_handle)
 {
-    if (RmlUiPlugin::ReleaseTexture(texture_handle))
+    if (RmlUiPlugin::ReleaseTexture.IsBinded() && RmlUiPlugin::ReleaseTexture(texture_handle))
         return;
 
     GPUTexture* texture = LoadedTextures.At((int)texture_handle);
