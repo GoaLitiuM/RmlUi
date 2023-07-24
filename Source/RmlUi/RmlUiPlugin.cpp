@@ -28,7 +28,7 @@
 #include <Engine/Engine/Screen.h>
 
 Function<GPUTexture* (uintptr&, Float2&, const String&)> RmlUiPlugin::OnLoadTexture;
-Function<bool(uintptr)> RmlUiPlugin::ReleaseTexture;
+Function<bool(uintptr)> RmlUiPlugin::OnReleaseTexture;
 
 namespace
 {

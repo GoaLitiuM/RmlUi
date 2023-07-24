@@ -71,7 +71,7 @@ public:
     /// <summary>
     /// Callback from FlaxRenderInterface in order to support custom texture unloading. Return false for default behaviour.
     /// </summary>
-    static Function<bool(uintptr)> ReleaseTexture;
+    static Function<bool(uintptr)> OnReleaseTexture;
 
     /// <summary>
     /// Register RmlUiCanvas for updates and rendering.

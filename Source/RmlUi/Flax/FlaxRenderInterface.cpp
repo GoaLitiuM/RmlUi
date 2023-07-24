@@ -392,7 +392,7 @@ bool FlaxRenderInterface::GenerateTexture(Rml::TextureHandle& texture_handle, co
 
 void FlaxRenderInterface::ReleaseTexture(Rml::TextureHandle texture_handle)
 {
-    if (RmlUiPlugin::ReleaseTexture.IsBinded() && RmlUiPlugin::ReleaseTexture(texture_handle))
+    if (RmlUiPlugin::OnReleaseTexture.IsBinded() && RmlUiPlugin::OnReleaseTexture(texture_handle))
         return;
 
     GPUTexture* texture = LoadedTextures.At((int)texture_handle);
