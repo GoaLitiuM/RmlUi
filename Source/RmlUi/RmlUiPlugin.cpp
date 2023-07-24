@@ -53,7 +53,7 @@ PluginDescription GetPluginDescription(bool isEditorPlugin)
     description.Description = TEXT("RmlUi is a user interface library based on HTML and CSS standards.");
     description.Author = TEXT("Michael R. P. Ragazzon");
     description.AuthorUrl = TEXT("https://github.com/mikke89/RmlUi");
-	description.HomepageUrl = TEXT("https://github.com/mikke89/RmlUi");
+    description.HomepageUrl = TEXT("https://github.com/mikke89/RmlUi");
     description.RepositoryUrl = TEXT("https://github.com/GoaLitiuM/RmlUi");
     return description;
 }
