@@ -3,6 +3,7 @@
 #include <Engine/Core/Config/Settings.h>
 #include <Engine/Input/Input.h>
 #include <Engine/Scripting/Plugins/GamePlugin.h>
+#include <Engine/Graphics/Textures/GPUTexture.h>
 #if USE_EDITOR
 #include <Engine/Scripting/Plugins/EditorPlugin.h>
 #endif
@@ -61,6 +62,16 @@ public:
     /// Deinitializes RmlUi and all custom interfaces.
     /// </summary>
     static void DeinitializeRmlUi();
+
+    /// <summary>
+    /// Callback from FlaxRenderInterface in order to support custom texture loading. Return nullptr for default behaviour.
+    /// </summary>
+    static Function<GPUTexture*(uintptr&, Float2&, const String&)> OnLoadTexture;
+
+    /// <summary>
+    /// Callback from FlaxRenderInterface in order to support custom texture unloading. Return false for default behaviour.
+    /// </summary>
+    static Function<bool(uintptr)> ReleaseTexture;
 
     /// <summary>
     /// Register RmlUiCanvas for updates and rendering.

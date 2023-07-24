@@ -17,6 +17,7 @@ class Texture;
 class FlaxRenderInterface : public Rml::RenderInterface
 {
 public:
+    friend class RmlUiPlugin;
     // [Rml::RenderInterface]
     FlaxRenderInterface();
     ~FlaxRenderInterface() override;

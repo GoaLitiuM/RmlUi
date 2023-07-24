@@ -27,6 +27,9 @@
 #include <Engine/Platform/Window.h>
 #include <Engine/Engine/Screen.h>
 
+Function<GPUTexture* (uintptr&, Float2&, const String&)> RmlUiPlugin::OnLoadTexture;
+Function<bool(uintptr)> RmlUiPlugin::ReleaseTexture;
+
 namespace
 {
     bool RmlUiInitialized = false;
