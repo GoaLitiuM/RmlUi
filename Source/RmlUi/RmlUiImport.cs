@@ -6,8 +6,224 @@ using FlaxEngine;
 using FlaxEditor;
 using FlaxEditor.Windows;
 using FlaxEditor.Content.Import;
+using System.Runtime.CompilerServices;
 
 namespace RmlUi;
+
+public unsafe partial struct RmlUiTransformPrimitive
+{
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformMatrix2D value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformMatrix3D value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformTranslateX value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformTranslateY value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformTranslateZ value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformTranslate2D value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformTranslate3D value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformScaleX value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformScaleY value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformScaleZ value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformScale2D value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformScale3D value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformRotateX value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformRotateY value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformRotateZ value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformRotate2D value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformRotate3D value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformSkewX value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformSkewY value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformSkew2D value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformPerspective value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+
+    /// <inheritdoc />
+    public static implicit operator RmlUiTransformPrimitive(RmlUiTransformDecomposedMatrix4 value)
+    {
+        RmlUiTransformPrimitive primitive = default;
+        Unsafe.Write(Unsafe.AsPointer(ref primitive), value);
+        return primitive;
+    }
+}
+
+#if false
+public unsafe partial class RmlUiTransform : FlaxEngine.Object
+{
+    public static RmlUiProperty MakeProperty(params RmlUiTransformPrimitive[] primitives)
+    {
+        return MakePropertyInternal(primitives);
+    }
+}
+#endif
+
+public partial struct RmlUiTween
+{
+    public RmlUiTween(RmlUiTweenType type = RmlUiTweenType.Linear, RmlUiTweenDirection direction = RmlUiTweenDirection.Out)
+    {
+        if (direction.HasFlag(RmlUiTweenDirection.In))
+            TypeIn = type;
+        if (direction.HasFlag(RmlUiTweenDirection.Out))
+            TypeOut = type;
+    }
+
+    public RmlUiTween(RmlUiTweenType typeIn, RmlUiTweenType typeOut)
+    {
+        TypeIn = typeIn;
+        TypeIn = typeOut;
+    }
+
+    //public RmlUiTween(Callback callback, RmlUiTweenDirection direction = RmlUiTweenDirection.In)
+    //{
+    //}
+}
+
+public partial class RmlUiTransforms
+{
+    
+}
 
 /// <summary>
 /// Import settings for RmlUi assets.

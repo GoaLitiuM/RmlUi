@@ -1,0 +1,24 @@
+﻿#include "RmlUiTransform.h"
+const Rml::Transforms::NumericValue values16[] = { {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {} };
+Rml::Transforms::Matrix2D RmlUiTransformMatrix2D::dummy(&values16[0]);
+Rml::Transforms::Matrix3D RmlUiTransformMatrix3D::dummy(&values16[0]);
+Rml::Transforms::TranslateX RmlUiTransformTranslateX::dummy(0.0f);
+Rml::Transforms::TranslateY RmlUiTransformTranslateY::dummy(0.0f);
+Rml::Transforms::TranslateZ RmlUiTransformTranslateZ::dummy(0.0f);
+Rml::Transforms::Translate2D RmlUiTransformTranslate2D::dummy(&values16[0]);
+Rml::Transforms::Translate3D RmlUiTransformTranslate3D::dummy(&values16[0]);
+Rml::Transforms::ScaleX RmlUiTransformScaleX::dummy(0.0f);
+Rml::Transforms::ScaleY RmlUiTransformScaleY::dummy(0.0f);
+Rml::Transforms::ScaleZ RmlUiTransformScaleZ::dummy(0.0f);
+Rml::Transforms::Scale2D RmlUiTransformScale2D::dummy(0.0f);
+Rml::Transforms::Scale3D RmlUiTransformScale3D::dummy(0.0f);
+Rml::Transforms::RotateX RmlUiTransformRotateX::dummy(0.0f);
+Rml::Transforms::RotateY RmlUiTransformRotateY::dummy(0.0f);
+Rml::Transforms::RotateZ RmlUiTransformRotateZ::dummy(0.0f);
+Rml::Transforms::Rotate2D RmlUiTransformRotate2D::dummy(0.0f);
+Rml::Transforms::Rotate3D RmlUiTransformRotate3D::dummy(&values16[0]);
+Rml::Transforms::SkewX RmlUiTransformSkewX::dummy(0.0f);
+Rml::Transforms::SkewY RmlUiTransformSkewY::dummy(0.0f);
+Rml::Transforms::Skew2D RmlUiTransformSkew2D::dummy(&values16[0]);
+Rml::Transforms::Perspective RmlUiTransformPerspective::dummy(&values16[0]);
+Rml::Transforms::DecomposedMatrix4 RmlUiTransformDecomposedMatrix4::dummy({});

@@ -16,22 +16,19 @@
 
 #include <locale>
 
-RmlUiDocument::RmlUiDocument(const SpawnParams& params)
-    : Actor(params)
-{
-}
+#include "RmlUiHelpers.h"
 
-Rml::ElementDocument* RmlUiDocument::GetDocument() const
+RmlUiDocument::RmlUiDocument(const SpawnParams& params)
+    : RmlUiElement(params)
 {
-    return elementDocument;
 }
 
 void RmlUiDocument::Show() const
 {
-    if (elementDocument == nullptr)
+    if (GetDocument() == nullptr)
         return;
 
-    elementDocument->Show();
+    GetDocument()->Show();
 
     if (AutoFocusDocument)
         Focus();
@@ -41,20 +38,38 @@ void RmlUiDocument::Hide() const
 {
     if (!RmlUiPlugin::IsInitialized())
         return;
-    if (elementDocument == nullptr)
+    if (GetDocument() == nullptr)
         return;
 
-    elementDocument->Hide();
+    GetDocument()->Hide();
 }
 
 void RmlUiDocument::Close() const
 {
     if (!RmlUiPlugin::IsInitialized())
         return;
-    if (elementDocument == nullptr)
+    if (GetDocument() == nullptr)
         return;
 
-    elementDocument->Close();
+    GetDocument()->Close();
+}
+
+RmlUiElement* RmlUiDocument::CreateElement(const String& name)
+{
+    auto elementPointer = GetDocument()->CreateElement(ToRmlString(name));
+    const auto wrappedElement = WrapChildElement(elementPointer.get());
+    wrappedChildElements.Add(wrappedElement);
+    ownedElements.Add(MoveTemp(elementPointer));
+    return wrappedElement;
+}
+
+RmlUiElement* RmlUiDocument::CreateTextNode(const String& text)
+{
+    auto elementPointer = GetDocument()->CreateTextNode(ToRmlString(text));
+    const auto wrappedElement = WrapChildElement(elementPointer.get());
+    wrappedChildElements.Add(wrappedElement);
+    ownedElements.Add(MoveTemp(elementPointer));
+    return wrappedElement;
 }
 
 bool RmlUiDocument::HasFocus() const
@@ -120,10 +135,10 @@ bool RmlUiDocument::LoadDocument()
 
     // Fix decimal parsing issues by changing the locale
     std::locale oldLocale = std::locale::global(std::locale::classic());
-    elementDocument = context->LoadDocument(documentPath);
+    element = context->LoadDocument(documentPath);
     std::locale::global(oldLocale);
 
-    if (elementDocument == nullptr)
+    if (element == nullptr)
     {
         LOG(Error, "Failed to load RmlUiDocument with id '{0}'", Document->GetID());
         return false;
@@ -140,11 +155,26 @@ void RmlUiDocument::UnloadDocument()
     Rml::Context* context = GetContext();
     if (context == nullptr)
         return;
-    if (elementDocument == nullptr)
+    if (element == nullptr)
         return;
 
-    context->UnloadDocument(elementDocument);
-    elementDocument = nullptr;
+    /*for (auto wrappedChild : wrappedChildElements)
+    {
+        Delete(wrappedChild);
+    }*/
+    wrappedChildElements.ClearDelete();
+
+    for (auto& el : ownedElements)
+        el.release();
+    ownedElements.Clear();
+
+    context->UnloadDocument(GetDocument());
+    element = nullptr;
+}
+
+bool RmlUiDocument::IsLoaded()
+{
+    return element != nullptr;
 }
 
 void RmlUiDocument::BeginPlay(SceneBeginData* data)
@@ -189,11 +219,11 @@ void RmlUiDocument::OnActiveInTreeChanged()
     bool active = GetIsActive();
     if (active)
     {
-        if (elementDocument == nullptr && AutoLoadDocument)
+        if (element == nullptr && AutoLoadDocument)
             LoadDocument();
         Show();
     }
-    else if (!active && elementDocument != nullptr)
+    else if (!active && element != nullptr)
     {
         Hide();
     }
