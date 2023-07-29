@@ -18,6 +18,7 @@
 #include "RmlUiProperty.h"
 #include "RmlUiTween.h"
 
+/// <inheritdoc />
 API_CLASS(Namespace="RmlUi") class RMLUI_API RmlUiElement : public Actor
 {
 	friend class RmlUiDocument;

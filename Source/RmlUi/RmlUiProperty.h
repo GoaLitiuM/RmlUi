@@ -471,6 +471,7 @@ API_ENUM(Namespace="RmlUi", Attributes = "Flags") enum class RmlUiUnit
     Angle = Deg | Rad
 };
 
+/// <inheritdoc />
 API_STRUCT(Namespace="RmlUi") struct RMLUI_API RmlUiPropertySource
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiPropertySource);
@@ -479,13 +480,14 @@ API_STRUCT(Namespace="RmlUi") struct RMLUI_API RmlUiPropertySource
         : path(path), lineNumber(line_number), ruleName(rule_name)
     {
     }
-    RmlUiPropertySource() {}
+    RmlUiPropertySource() = default;
 
     String path;
     int lineNumber;
     String ruleName;
 };
 
+/// <inheritdoc />
 API_CLASS(Namespace="RmlUi") class RMLUI_API RmlUiProperty : public ScriptingObject
 {
     DECLARE_SCRIPTING_TYPE_WITH_CONSTRUCTOR_IMPL(RmlUiProperty, ScriptingObject);
@@ -526,21 +528,21 @@ public partial class RmlUiProperty\
         NewPropertyInternal(this, value, unit, specificity);\
     }\
 }\
-}");
+}")
 
-    API_FUNCTION(Private) void NewPropertyInternal(RmlUiProperty* prop, float value, RmlUiUnit unit, int specificity = -1)
+    API_FUNCTION(Private) static void NewPropertyInternal(RmlUiProperty* prop, float value, RmlUiUnit unit, int specificity = -1)
     {
         prop->property = New<Rml::Property>(value, static_cast<Rml::Property::Unit>(unit), specificity);
         prop->ownedData = true;
     }
 
-    API_FUNCTION(Private) void NewPropertyInternal(RmlUiProperty* prop, Color value, RmlUiUnit unit, int specificity = -1)
+    API_FUNCTION(Private) static void NewPropertyInternal(RmlUiProperty* prop, Color value, RmlUiUnit unit, int specificity = -1)
     {
         prop->property = New<Rml::Property>(Rml::Colourb((Rml::byte)(value.R * 255), (Rml::byte)(value.G * 255), (Rml::byte)(value.B * 255), (Rml::byte)(value.A * 255)), static_cast<Rml::Property::Unit>(unit), specificity);
         prop->ownedData = true;
     }
 
-    API_FUNCTION(Private) void NewPropertyInternal(RmlUiProperty* prop, Color32 value, RmlUiUnit unit, int specificity = -1)
+    API_FUNCTION(Private) static void NewPropertyInternal(RmlUiProperty* prop, Color32 value, RmlUiUnit unit, int specificity = -1)
     {
         prop->property = New<Rml::Property>(Rml::Colourb(value.R, value.G, value.B, value.A), static_cast<Rml::Property::Unit>(unit), specificity);
         prop->ownedData = true;

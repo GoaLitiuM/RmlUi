@@ -55,7 +55,7 @@ API_ENUM(Namespace = "RmlUi") enum class RmlUiTweenDirection
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTween //: public ScriptingObject
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTween
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTween);
 private:
@@ -64,44 +64,34 @@ public:
     friend class RmlUiElement;
     using CallbackFnc = float(*)(float);
 
-    RmlUiTween()
-        //: ScriptingObject(SpawnParams(Guid::New(), TypeInitializer))
-    {
-    }
+    RmlUiTween() {}
 
     RmlUiTween(const RmlUiTween* tween)
-        //: ScriptingObject(SpawnParams(Guid::New(), TypeInitializer))
     {
         this->tween = tween->tween;
     }
 
     RmlUiTween(const RmlUiTween& tween)
-        //: ScriptingObject(SpawnParams(Guid::New(), TypeInitializer))
     {
         this->tween = tween.tween;
     }
 
     RmlUiTween(RmlUiTweenType type, RmlUiTweenDirection direction)
-        //: ScriptingObject(SpawnParams(Guid::New(), TypeInitializer))
         : tween((Rml::Tween::Type)type, (Rml::Tween::Direction)direction)
     {
     }
 
     RmlUiTween(RmlUiTweenType type_in, RmlUiTweenType type_out)
-        //: ScriptingObject(SpawnParams(Guid::New(), TypeInitializer))
         : tween((Rml::Tween::Type)type_in, (Rml::Tween::Type)type_out)
     {
     }
 
     RmlUiTween(CallbackFnc callback, RmlUiTweenDirection direction = RmlUiTweenDirection::In)
-        //: ScriptingObject(SpawnParams(Guid::New(), TypeInitializer))
         : tween(callback, (Rml::Tween::Direction)direction)
     {
     }
 
-    ~RmlUiTween()
-    {
-    }
+    ~RmlUiTween() {}
 
     operator Rml::Tween() const
     {
@@ -130,12 +120,13 @@ private:
 
         /// <inheritdoc />
         API_FIELD() RmlUiTweenType TypeIn;
+
         /// <inheritdoc />
         API_FIELD() RmlUiTweenType TypeOut;
+
         /// <inheritdoc />
         API_FIELD(Private) void* callback;
+
         //CallbackFnc callback = nullptr;
     };
-    
-    
 };

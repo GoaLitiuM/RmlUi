@@ -51,7 +51,10 @@ public:
     API_FIELD() Array<RmlUiFont> Fonts;
 
 public:
-    API_PROPERTY() RmlUiElement* Element() { return element; };
+    /// <summary>
+    /// Returns the element of this document.
+    /// </summary>
+    API_PROPERTY() RmlUiElement* Element() { return element; }
 
     /// <summary>
     /// Returns the wrapped Rml::Element.

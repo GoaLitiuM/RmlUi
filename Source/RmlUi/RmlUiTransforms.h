@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "RmlUiProperty.h"
-#include "RmlUiHelpers.h"
 
 // Conflicts with both Flax and RmlUi Math.h
 #undef RadiansToDegrees
@@ -10,15 +9,11 @@
 
 #include <ThirdParty/RmlUi/Core/Element.h>
 
-#include <Engine/Core/Math/Vector2.h>
-#include <Engine/Core/Collections/Array.h>
-#include <Engine/Core/Collections/Dictionary.h>
-#include <Engine/Core/Types/Span.h>
-
 #include <Engine/Core/Math/Vector3.h>
 #include <Engine/Core/Math/Vector4.h>
 #include <Engine/Core/Math/Matrix.h>
 
+/// <inheritdoc />
 API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiMatrix2D
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiMatrix2D);
@@ -67,7 +62,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiUnresolvedPrimi
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformMatrix2D
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformMatrix2D
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformMatrix2D);
 
@@ -94,7 +89,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformMatrix3D
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformMatrix3D
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformMatrix3D);
 
@@ -122,7 +117,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslateX
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslateX
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformTranslateX);
 
@@ -149,7 +144,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslateY
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslateY
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformTranslateY);
 
@@ -176,7 +171,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslateZ
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslateZ
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformTranslateZ);
 
@@ -203,7 +198,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslate2D
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslate2D
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformTranslate2D);
 
@@ -233,7 +228,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslate3D
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslate3D
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformTranslate3D);
 
@@ -293,7 +288,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScaleY
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScaleY
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformScaleY);
 
@@ -320,7 +315,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScaleZ
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScaleZ
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformScaleZ);
 
@@ -347,7 +342,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScale2D
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScale2D
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformScale2D);
 
@@ -377,7 +372,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScale3D
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScale3D
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformScale3D);
 
@@ -408,7 +403,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotateX
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotateX
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformRotateX);
 
@@ -441,7 +436,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotateY
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotateY
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformRotateY);
 
@@ -474,7 +469,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotateZ
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotateZ
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformRotateZ);
 
@@ -507,7 +502,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotate2D
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotate2D
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformRotate2D);
 
@@ -540,7 +535,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotate3D
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotate3D
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformRotate3D);
 
@@ -582,7 +577,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkewX
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkewX
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformSkewX);
 
@@ -615,7 +610,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkewY
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkewY
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformSkewY);
 
@@ -648,7 +643,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkew2D
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkew2D
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformSkew2D);
 
@@ -684,7 +679,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformPerspective
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformPerspective
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformPerspective);
 
@@ -718,7 +713,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformDecomposedMatrix4
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformDecomposedMatrix4
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformDecomposedMatrix4);
 

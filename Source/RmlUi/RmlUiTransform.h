@@ -65,7 +65,7 @@ API_CLASS(Namespace="RmlUi", NoSpawn) class RMLUI_API RmlUiTransform : public Sc
     API_FUNCTION() Span<RmlUiTransformPrimitive> GetPrimitives()
     {
         std::vector<Rml::TransformPrimitive> prims = transform.get()->GetPrimitives();
-        Span<RmlUiTransformPrimitive> span(reinterpret_cast<RmlUiTransformPrimitive*>(&prims[0]), (int32)prims.size());
+        Span<RmlUiTransformPrimitive> span(reinterpret_cast<RmlUiTransformPrimitive*>(prims.data()), (int32)prims.size());
         return span;
     }
     
