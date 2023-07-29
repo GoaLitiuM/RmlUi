@@ -19,6 +19,34 @@
 #include <Engine/Core/Math/Vector4.h>
 #include <Engine/Core/Math/Matrix.h>
 
+
+/// <inheritdoc />
+API_STRUCT(NoConstructor, Namespace = "RmlUi") struct RMLUI_API RmlUiUnresolvedPrimitiveFloat
+{
+    DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiUnresolvedPrimitiveFloat);
+
+    RmlUiUnresolvedPrimitiveFloat()
+        : unit(RmlUiUnit::Unknown), number(0.0f)
+    {
+    }
+
+    RmlUiUnresolvedPrimitiveFloat(RmlUiUnit unit, float number)
+        : unit(unit), number(number)
+    {
+    }
+
+    RmlUiUnresolvedPrimitiveFloat(Rml::Property::Unit unit, float number)
+        : unit((RmlUiUnit)unit), number(number)
+    {
+    }
+
+    /// <inheritdoc />
+    API_FIELD(Private) float number;
+
+    /// <inheritdoc />
+    API_FIELD(Private) RmlUiUnit unit;
+};
+
 /// <inheritdoc />
 API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformMatrix2D
 {
@@ -44,6 +72,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -79,6 +109,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -113,13 +145,15 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
         Rml::Transforms::TranslateX translate_x;
 
         /// <inheritdoc />
-        API_FIELD(Private) float value0;
+        API_FIELD(Private) RmlUiUnresolvedPrimitiveFloat value0;
     };
 };
 
@@ -147,13 +181,15 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
         Rml::Transforms::TranslateY translate_y;
 
         /// <inheritdoc />
-        API_FIELD(Private) float value0;
+        API_FIELD(Private) RmlUiUnresolvedPrimitiveFloat value0;
     };
 };
 
@@ -181,13 +217,15 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
         Rml::Transforms::TranslateZ translate_z;
 
         /// <inheritdoc />
-        API_FIELD(Private) float value0;
+        API_FIELD(Private) RmlUiUnresolvedPrimitiveFloat value0;
     };
 };
 
@@ -215,15 +253,17 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
         Rml::Transforms::Translate2D translate_2d;
 
         /// <inheritdoc />
-        API_FIELD(Private) float value0;
+        API_FIELD(Private) RmlUiUnresolvedPrimitiveFloat value0;
         /// <inheritdoc />
-        API_FIELD(Private) float value1;
+        API_FIELD(Private) RmlUiUnresolvedPrimitiveFloat value1;
     };
 };
 
@@ -251,19 +291,21 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
         Rml::Transforms::Translate3D translate_3d;
 
         /// <inheritdoc />
-        API_FIELD(Private) float value0;
+        API_FIELD(Private) RmlUiUnresolvedPrimitiveFloat value0;
         /// <inheritdoc />
-        API_FIELD(Private) float value1;
+        API_FIELD(Private) RmlUiUnresolvedPrimitiveFloat value1;
         /// <inheritdoc />
-        API_FIELD(Private) float value2;
+        API_FIELD(Private) RmlUiUnresolvedPrimitiveFloat value2;
         /// <inheritdoc />
-        API_FIELD(Private) float value3;
+        API_FIELD(Private) RmlUiUnresolvedPrimitiveFloat value3;
     };
 };
 
@@ -291,6 +333,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -325,6 +369,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -359,6 +405,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -393,6 +441,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -429,6 +479,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -469,6 +521,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -503,6 +557,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -537,6 +593,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -571,6 +629,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -605,6 +665,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -645,6 +707,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -679,6 +743,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -713,6 +779,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
@@ -750,13 +818,15 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
         Rml::Transforms::Perspective perspective;
 
         /// <inheritdoc />
-        API_FIELD(Private) float value0;
+        API_FIELD(Private) RmlUiUnresolvedPrimitiveFloat value0;
     };
 };
 
@@ -784,6 +854,8 @@ private:
 
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
+    // [Rml::TransformPrimitive]
+    /// <inheritdoc />
     API_FIELD(Private) byte type;
     union
     {
