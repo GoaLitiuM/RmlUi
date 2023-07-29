@@ -11,7 +11,7 @@
 #include <Engine/Core/Math/Color32.h>
 #include <Engine/Scripting/ScriptingObject.h>
 
-
+#include "RmlUiHelpers.h"
 
 /// <inheritdoc />
 API_ENUM(Namespace="RmlUi") enum class RmlUiShorthandId : uint8
@@ -536,7 +536,7 @@ public partial class RmlUiProperty\
 
     API_FUNCTION(Private) void NewPropertyInternal(RmlUiProperty* prop, Color value, RmlUiUnit unit, int specificity = -1)
     {
-        prop->property = New<Rml::Property>(Rml::Colourf(value.R, value.G, value.B, value.A), static_cast<Rml::Property::Unit>(unit), specificity);
+        prop->property = New<Rml::Property>(Rml::Colourb((Rml::byte)(value.R * 255), (Rml::byte)(value.G * 255), (Rml::byte)(value.B * 255), (Rml::byte)(value.A * 255)), static_cast<Rml::Property::Unit>(unit), specificity);
         prop->ownedData = true;
     }
 
@@ -559,6 +559,13 @@ public partial class RmlUiProperty\
     {
         return property;
     }
+
+    API_FUNCTION() Matrix GetMatrix();
+
+    API_FUNCTION() float GetFloat();
+
+    API_FUNCTION() class RmlUiTransform* GetTransform();
+
     /*
         API_FIELD() Variant& GetValue();
         API_FIELD() RmlUiUnit GetUnit();

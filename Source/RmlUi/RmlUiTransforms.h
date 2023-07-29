@@ -21,14 +21,11 @@
 
 
 /// <inheritdoc />
-API_STRUCT(NoConstructor, Namespace = "RmlUi") struct RMLUI_API RmlUiUnresolvedPrimitiveFloat
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiUnresolvedPrimitiveFloat
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiUnresolvedPrimitiveFloat);
 
-    RmlUiUnresolvedPrimitiveFloat()
-        : unit(RmlUiUnit::Unknown), number(0.0f)
-    {
-    }
+    RmlUiUnresolvedPrimitiveFloat() {}
 
     RmlUiUnresolvedPrimitiveFloat(RmlUiUnit unit, float number)
         : unit(unit), number(number)
@@ -56,7 +53,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformMatrix2D
 
     RmlUiTransformMatrix2D()
         : type(Rml::TransformPrimitive::Type::MATRIX2D)
-        , matrix_2d(dummy)
     {
     }
 
@@ -68,13 +64,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformMatrix2D
     }
 
 private:
-    static Rml::Transforms::Matrix2D dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::Matrix2D matrix_2d;
@@ -93,7 +87,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformMatrix3D
 
     RmlUiTransformMatrix3D()
         : type(Rml::TransformPrimitive::Type::MATRIX3D)
-        , matrix_3d(dummy)
     {
     }
 
@@ -105,13 +98,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformMatrix3D
     }
 
 private:
-    static Rml::Transforms::Matrix3D dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::Matrix3D matrix_3d;
@@ -130,7 +121,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslateX
 
     RmlUiTransformTranslateX()
         : type(Rml::TransformPrimitive::Type::TRANSLATEX)
-        , translate_x(dummy)
     {
     }
 
@@ -141,13 +131,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslateX
     }
 
 private:
-    static Rml::Transforms::TranslateX dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::TranslateX translate_x;
@@ -166,7 +154,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslateY
 
     RmlUiTransformTranslateY()
         : type(Rml::TransformPrimitive::Type::TRANSLATEY)
-        , translate_y(dummy)
     {
     }
 
@@ -177,13 +164,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslateY
     }
 
 private:
-    static Rml::Transforms::TranslateY dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::TranslateY translate_y;
@@ -202,7 +187,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslateZ
 
     RmlUiTransformTranslateZ()
         : type(Rml::TransformPrimitive::Type::TRANSLATEZ)
-        , translate_z(dummy)
     {
     }
 
@@ -213,13 +197,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslateZ
     }
 
 private:
-    static Rml::Transforms::TranslateZ dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::TranslateZ translate_z;
@@ -238,7 +220,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslate2D
 
     RmlUiTransformTranslate2D()
         : type(Rml::TransformPrimitive::Type::TRANSLATE2D)
-        , translate_2d(dummy)
     {
     }
 
@@ -249,13 +230,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslate2D
     }
 
 private:
-    static Rml::Transforms::Translate2D dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::Translate2D translate_2d;
@@ -276,7 +255,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslate3D
 
     RmlUiTransformTranslate3D()
         : type(Rml::TransformPrimitive::Type::TRANSLATE3D)
-        , translate_3d(dummy)
     {
     }
 
@@ -287,13 +265,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTranslate3D
     }
 
 private:
-    static Rml::Transforms::Translate3D dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::Translate3D translate_3d;
@@ -310,7 +286,7 @@ private:
 };
 
 /// <inheritdoc />
-API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScaleX
+API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScaleX
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformScaleX);
 
@@ -318,7 +294,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScaleX
 
     RmlUiTransformScaleX()
         : type(Rml::TransformPrimitive::Type::SCALEX)
-        , scale_x(dummy)
     {
     }
 
@@ -329,13 +304,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScaleX
     }
 
 private:
-    static Rml::Transforms::ScaleX dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::ScaleX scale_x;
@@ -354,7 +327,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScaleY
 
     RmlUiTransformScaleY()
         : type(Rml::TransformPrimitive::Type::SCALEY)
-        , scale_y(dummy)
     {
     }
 
@@ -365,13 +337,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScaleY
     }
 
 private:
-    static Rml::Transforms::ScaleY dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::ScaleY scale_y;
@@ -390,7 +360,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScaleZ
 
     RmlUiTransformScaleZ()
         : type(Rml::TransformPrimitive::Type::SCALEZ)
-        , scale_z(dummy)
     {
     }
 
@@ -401,13 +370,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScaleZ
     }
 
 private:
-    static Rml::Transforms::ScaleZ dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::ScaleZ scale_z;
@@ -426,7 +393,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScale2D
 
     RmlUiTransformScale2D()
         : type(Rml::TransformPrimitive::Type::SCALE2D)
-        , scale_2d(dummy)
     {
     }
 
@@ -437,13 +403,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScale2D
     }
 
 private:
-    static Rml::Transforms::Scale2D dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::Scale2D scale_2d;
@@ -464,7 +428,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScale3D
 
     RmlUiTransformScale3D()
         : type(Rml::TransformPrimitive::Type::SCALE3D)
-        , scale_3d(dummy)
     {
     }
 
@@ -475,13 +438,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformScale3D
     }
 
 private:
-    static Rml::Transforms::Scale3D dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::Scale3D scale_3d;
@@ -506,7 +467,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotateX
 
     RmlUiTransformRotateX()
         : type(Rml::TransformPrimitive::Type::ROTATEX)
-        , rotate_x(dummy)
     {
     }
 
@@ -517,13 +477,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotateX
     }
 
 private:
-    static Rml::Transforms::RotateX dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::RotateX rotate_x;
@@ -542,7 +500,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotateY
 
     RmlUiTransformRotateY()
         : type(Rml::TransformPrimitive::Type::ROTATEY)
-        , rotate_y(dummy)
     {
     }
 
@@ -553,13 +510,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotateY
     }
 
 private:
-    static Rml::Transforms::RotateY dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::RotateY rotate_y;
@@ -578,7 +533,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotateZ
 
     RmlUiTransformRotateZ()
         : type(Rml::TransformPrimitive::Type::ROTATEZ)
-        , rotate_z(dummy)
     {
     }
 
@@ -589,13 +543,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotateZ
     }
 
 private:
-    static Rml::Transforms::RotateZ dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::RotateZ rotate_z;
@@ -614,7 +566,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotate2D
 
     RmlUiTransformRotate2D()
         : type(Rml::TransformPrimitive::Type::ROTATE2D)
-        , rotate_2d(dummy)
     {
     }
 
@@ -625,13 +576,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotate2D
     }
 
 private:
-    static Rml::Transforms::Rotate2D dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::Rotate2D rotate_2d;
@@ -650,7 +599,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotate3D
     
     RmlUiTransformRotate3D()
         : type(Rml::TransformPrimitive::Type::ROTATE3D)
-        , rotate_3d(dummy)
     {
     }
     
@@ -661,13 +609,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotate3D
     }
     
 private:
-    static Rml::Transforms::Rotate3D dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::Rotate3D rotate_3d;
@@ -692,7 +638,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkewX
 
     RmlUiTransformSkewX()
         : type(Rml::TransformPrimitive::Type::SKEWX)
-        , skew_x(dummy)
     {
     }
 
@@ -703,13 +648,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkewX
     }
 
 private:
-    static Rml::Transforms::SkewX dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::SkewX skew_x;
@@ -728,7 +671,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkewY
 
     RmlUiTransformSkewY()
         : type(Rml::TransformPrimitive::Type::SKEWY)
-        , skew_y(dummy)
     {
     }
 
@@ -739,13 +681,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkewY
     }
 
 private:
-    static Rml::Transforms::SkewY dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::SkewY skew_y;
@@ -764,7 +704,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkew2D
 
     RmlUiTransformSkew2D()
         : type(Rml::TransformPrimitive::Type::SKEW2D)
-        , skew_2d(dummy)
     {
     }
 
@@ -775,13 +714,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkew2D
     }
 
 private:
-    static Rml::Transforms::Skew2D dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::Skew2D skew_2d;
@@ -802,7 +739,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformPerspective
 
     RmlUiTransformPerspective()
         : type(Rml::TransformPrimitive::Type::PERSPECTIVE)
-        , perspective(dummy)
     {
     }
 
@@ -814,13 +750,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformPerspective
     }
 
 private:
-    static Rml::Transforms::Perspective dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::Perspective perspective;
@@ -839,7 +773,6 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformDecomposedMatrix4
 
     RmlUiTransformDecomposedMatrix4()
         : type(Rml::TransformPrimitive::Type::DECOMPOSEDMATRIX4)
-        , decomposed_matrix_4(dummy)
     {
     }
 
@@ -850,13 +783,11 @@ API_STRUCT(Namespace = "RmlUi") struct RMLUI_API RmlUiTransformDecomposedMatrix4
     }
 
 private:
-    static Rml::Transforms::DecomposedMatrix4 dummy;
-
     // HACK: Expose private fields to scripting to match with the memory layout of this structure
 
     // [Rml::TransformPrimitive]
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
+    API_FIELD(Private) int32 type;
     union
     {
         Rml::Transforms::DecomposedMatrix4 decomposed_matrix_4;

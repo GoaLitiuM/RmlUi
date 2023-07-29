@@ -21,12 +21,12 @@ API_CLASS(Static, Namespace = "RmlUi") class RMLUI_API RmlUiStyleSheetSpecificat
 public:
     /// Starts up the specification structure and registers default properties and type parsers.
     /// @return True if the specification started up successfully, false if not.
-    API_FUNCTION(Static) static bool Initialise()
+    API_FUNCTION() static bool Initialise()
     {
         return Rml::StyleSheetSpecification::Initialise();
     }
     /// Destroys the specification structure and releases the parsers.
-    API_FUNCTION(Static) static void Shutdown()
+    API_FUNCTION() static void Shutdown()
     {
         return Rml::StyleSheetSpecification::Shutdown();
     }
@@ -76,7 +76,7 @@ public:
 #endif
 
     /// 
-    API_FUNCTION(Static) static Dictionary<RmlUiPropertyId, RmlUiProperty*> ParsePropertyDeclaration(const String& property_name, const String& property_value)
+    API_FUNCTION() static Dictionary<RmlUiPropertyId, RmlUiProperty*> ParsePropertyDeclaration(const String& property_name, const String& property_value)
     {
         Rml::PropertyDictionary dict;
         Rml::StyleSheetSpecification::ParsePropertyDeclaration(dict, ToRmlString(property_name), ToRmlString(property_value));
@@ -88,7 +88,7 @@ public:
     }
 
     ///
-    API_FUNCTION(Static) static bool TryParsePropertyDeclaration(API_PARAM(Out) Dictionary<RmlUiPropertyId, RmlUiProperty*>& dictionary, const String& property_name, const String& property_value)
+    API_FUNCTION() static bool TryParsePropertyDeclaration(API_PARAM(Out) Dictionary<RmlUiPropertyId, RmlUiProperty*>& dictionary, const String& property_name, const String& property_value)
     {
         Rml::PropertyDictionary dict;
         for (auto iter = dictionary.Begin(); iter.IsNotEnd(); iter++)
@@ -107,7 +107,7 @@ public:
     /// @param[in] source_file The file where this property was declared. Used for error reporting, debugging and relative paths for referenced assets.
     /// @param[in] line_number The location of the source file where this property was declared. Used for error reporting and debugging.
     /// @return True if all properties were parsed successfully, false otherwise.
-    API_FUNCTION(Static) static bool ParsePropertyDeclaration(API_PARAM(Ref) Dictionary<RmlUiPropertyId, RmlUiProperty*>& dictionary, const String& property_name, const String& property_value)
+    API_FUNCTION() static bool ParsePropertyDeclaration(API_PARAM(Ref) Dictionary<RmlUiPropertyId, RmlUiProperty*>& dictionary, const String& property_name, const String& property_value)
     {
         Rml::PropertyDictionary dict;
         for (auto iter = dictionary.Begin(); iter.IsNotEnd(); iter++)

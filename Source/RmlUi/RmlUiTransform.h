@@ -9,6 +9,7 @@
 #undef NormaliseAngle
 
 #include <ThirdParty/RmlUi/Core/Element.h>
+#include <ThirdParty/RmlUi/Core/TransformPrimitive.h>
 
 #include <Engine/Core/Math/Vector2.h>
 #include <Engine/Core/Collections/Array.h>
@@ -18,107 +19,20 @@
 #include <Engine/Core/Math/Vector3.h>
 #include <Engine/Core/Math/Vector4.h>
 
-
-API_STRUCT(Namespace="RmlUi") struct RMLUI_API RmlUiTransformPrimitive
+/// <inheritdoc />
+API_STRUCT(NoDefault, Namespace="RmlUi") struct RMLUI_API RmlUiTransformPrimitive
 {
+    // The size of this structure should match the size of Rml::TransformPrimitive
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransformPrimitive);
 
-    RmlUiTransformPrimitive() {};
-
-    RmlUiTransformPrimitive(Rml::Transforms::Matrix2D          p) : type(Rml::TransformPrimitive::Type::MATRIX2D) { matrix_2d = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::Matrix3D          p) : type(Rml::TransformPrimitive::Type::MATRIX3D) { matrix_3d = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::TranslateX        p) : type(Rml::TransformPrimitive::Type::TRANSLATEX) { translate_x = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::TranslateY        p) : type(Rml::TransformPrimitive::Type::TRANSLATEY) { translate_y = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::TranslateZ        p) : type(Rml::TransformPrimitive::Type::TRANSLATEZ) { translate_z = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::Translate2D       p) : type(Rml::TransformPrimitive::Type::TRANSLATE2D) { translate_2d = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::Translate3D       p) : type(Rml::TransformPrimitive::Type::TRANSLATE3D) { translate_3d = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::ScaleX            p) : type(Rml::TransformPrimitive::Type::SCALEX) { scale_x = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::ScaleY            p) : type(Rml::TransformPrimitive::Type::SCALEY) { scale_y = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::ScaleZ            p) : type(Rml::TransformPrimitive::Type::SCALEZ) { scale_z = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::Scale2D           p) : type(Rml::TransformPrimitive::Type::SCALE2D) { scale_2d = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::Scale3D           p) : type(Rml::TransformPrimitive::Type::SCALE3D) { scale_3d = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::RotateX           p) : type(Rml::TransformPrimitive::Type::ROTATEX) { rotate_x = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::RotateY           p) : type(Rml::TransformPrimitive::Type::ROTATEY) { rotate_y = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::RotateZ           p) : type(Rml::TransformPrimitive::Type::ROTATEZ) { rotate_z = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::Rotate2D          p) : type(Rml::TransformPrimitive::Type::ROTATE2D) { rotate_2d = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::Rotate3D          p) : type(Rml::TransformPrimitive::Type::ROTATE3D) { rotate_3d = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::SkewX             p) : type(Rml::TransformPrimitive::Type::SKEWX) { skew_x = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::SkewY             p) : type(Rml::TransformPrimitive::Type::SKEWY) { skew_y = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::Skew2D            p) : type(Rml::TransformPrimitive::Type::SKEW2D) { skew_2d = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::Perspective       p) : type(Rml::TransformPrimitive::Type::PERSPECTIVE) { perspective = p; }
-    RmlUiTransformPrimitive(Rml::Transforms::DecomposedMatrix4 p) : type(Rml::TransformPrimitive::Type::DECOMPOSEDMATRIX4) { decomposed_matrix_4 = p; }
-
-    RmlUiTransformPrimitive(RmlUiTransformMatrix2D p) : type(Rml::TransformPrimitive::Type::MATRIX2D) { matrix_2d = p.matrix_2d; }
-    RmlUiTransformPrimitive(RmlUiTransformMatrix3D p) : type(Rml::TransformPrimitive::Type::MATRIX3D) { matrix_3d = p.matrix_3d; }
-    RmlUiTransformPrimitive(RmlUiTransformTranslateX p) : type(Rml::TransformPrimitive::Type::TRANSLATEX) { translate_x = p.translate_x; }
-    RmlUiTransformPrimitive(RmlUiTransformTranslateY p) : type(Rml::TransformPrimitive::Type::TRANSLATEY) { translate_y = p.translate_y; }
-    RmlUiTransformPrimitive(RmlUiTransformTranslateZ p) : type(Rml::TransformPrimitive::Type::TRANSLATEZ) { translate_z = p.translate_z; }
-    RmlUiTransformPrimitive(RmlUiTransformTranslate2D p) : type(Rml::TransformPrimitive::Type::TRANSLATE2D) { translate_2d = p.translate_2d; }
-    RmlUiTransformPrimitive(RmlUiTransformTranslate3D p) : type(Rml::TransformPrimitive::Type::TRANSLATE3D) { translate_3d = p.translate_3d; }
-    RmlUiTransformPrimitive(RmlUiTransformScaleX p) : type(Rml::TransformPrimitive::Type::SCALEX) { scale_x = p.scale_x; }
-    RmlUiTransformPrimitive(RmlUiTransformScaleY p) : type(Rml::TransformPrimitive::Type::SCALEY) { scale_y = p.scale_y; }
-    RmlUiTransformPrimitive(RmlUiTransformScaleZ p) : type(Rml::TransformPrimitive::Type::SCALEZ) { scale_z = p.scale_z; }
-    RmlUiTransformPrimitive(RmlUiTransformScale2D p) : type(Rml::TransformPrimitive::Type::SCALE2D) { scale_2d = p.scale_2d; }
-    RmlUiTransformPrimitive(RmlUiTransformScale3D p) : type(Rml::TransformPrimitive::Type::SCALE3D) { scale_3d = p.scale_3d; }
-    RmlUiTransformPrimitive(RmlUiTransformRotateX p) : type(Rml::TransformPrimitive::Type::ROTATEX) { rotate_x = p.rotate_x; }
-    RmlUiTransformPrimitive(RmlUiTransformRotateY p) : type(Rml::TransformPrimitive::Type::ROTATEY) { rotate_y = p.rotate_y; }
-    RmlUiTransformPrimitive(RmlUiTransformRotateZ p) : type(Rml::TransformPrimitive::Type::ROTATEZ) { rotate_z = p.rotate_z; }
-    RmlUiTransformPrimitive(RmlUiTransformRotate2D p) : type(Rml::TransformPrimitive::Type::ROTATE2D) { rotate_2d = p.rotate_2d; }
-    RmlUiTransformPrimitive(RmlUiTransformRotate3D p) : type(Rml::TransformPrimitive::Type::ROTATE3D) { rotate_3d = p.rotate_3d; }
-    RmlUiTransformPrimitive(RmlUiTransformSkewX p) : type(Rml::TransformPrimitive::Type::SKEWX) { skew_x = p.skew_x; }
-    RmlUiTransformPrimitive(RmlUiTransformSkewY p) : type(Rml::TransformPrimitive::Type::SKEWY) { skew_y = p.skew_y; }
-    RmlUiTransformPrimitive(RmlUiTransformSkew2D p) : type(Rml::TransformPrimitive::Type::SKEW2D) { skew_2d = p.skew_2d; }
-    RmlUiTransformPrimitive(RmlUiTransformPerspective p) : type(Rml::TransformPrimitive::Type::PERSPECTIVE) { perspective = p.perspective; }
-    RmlUiTransformPrimitive(RmlUiTransformDecomposedMatrix4 p) : type(Rml::TransformPrimitive::Type::DECOMPOSEDMATRIX4) { decomposed_matrix_4 = p.decomposed_matrix_4; }
-    
-
-    // HACK: Expose private fields to scripting to match with the memory layout of this structure
+    /// <inheritdoc />
+    API_FIELD(Private) int32 type;
 
     /// <inheritdoc />
-    API_FIELD(Private) byte type;
-
-    union
-    {
-        Rml::Transforms::Matrix2D matrix_2d;
-        Rml::Transforms::Matrix3D matrix_3d;
-        Rml::Transforms::TranslateX translate_x;
-        Rml::Transforms::TranslateY translate_y;
-        Rml::Transforms::TranslateZ translate_z;
-        Rml::Transforms::Translate2D translate_2d;
-        Rml::Transforms::Translate3D translate_3d;
-        Rml::Transforms::ScaleX scale_x;
-        Rml::Transforms::ScaleY scale_y;
-        Rml::Transforms::ScaleZ scale_z;
-        Rml::Transforms::Scale2D scale_2d;
-        Rml::Transforms::Scale3D scale_3d;
-        Rml::Transforms::RotateX rotate_x;
-        Rml::Transforms::RotateY rotate_y;
-        Rml::Transforms::RotateZ rotate_z;
-        Rml::Transforms::Rotate2D rotate_2d;
-        Rml::Transforms::Rotate3D rotate_3d;
-        Rml::Transforms::SkewX skew_x;
-        Rml::Transforms::SkewY skew_y;
-        Rml::Transforms::Skew2D skew_2d;
-        Rml::Transforms::Perspective perspective;
-        Rml::Transforms::DecomposedMatrix4 decomposed_matrix_4;
-
-        /// <inheritdoc />
-        API_FIELD(Private) Float4 perspective_;
-
-        /// <inheritdoc />
-        API_FIELD(Private) Float4 quaternion_;
-
-        /// <inheritdoc />
-        API_FIELD(Private) Float3 translation_;
-
-        /// <inheritdoc />
-        API_FIELD(Private) Float3 scale_;
-
-        /// <inheritdoc />
-        API_FIELD(Private) Float3 skew_;
-    };
+    API_FIELD(Private, NoArray) float value[17];
 };
 
+/// <inheritdoc />
 API_CLASS(Namespace="RmlUi", NoSpawn) class RMLUI_API RmlUiTransform : public ScriptingObject
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransform);
@@ -127,20 +41,46 @@ API_CLASS(Namespace="RmlUi", NoSpawn) class RMLUI_API RmlUiTransform : public Sc
         : ScriptingObject(SpawnParams(Guid::New(), TypeInitializer))
     {
     }
+    
+    RmlUiTransform(Rml::TransformPtr& transform)
+        : ScriptingObject(SpawnParams(Guid::New(), TypeInitializer))
+    {
+        this->transform.swap(transform);
+    }
 
+    ~RmlUiTransform() {}
+    
     API_FUNCTION() static RmlUiProperty* MakeProperty(API_PARAM(Params) Span<RmlUiTransformPrimitive> primitives)
     {
         std::vector<Rml::TransformPrimitive> prims;
         for (int i = 0; i < primitives.Length(); i++)
-            prims.push_back(*reinterpret_cast<Rml::TransformPrimitive*>(&primitives[i]));
+        {
+            RmlUiTransformPrimitive poo = primitives[i];
+            Rml::TransformPrimitive p = *reinterpret_cast<Rml::TransformPrimitive*>(&poo);
+            prims.push_back(p);
+        }
 
-        return New<RmlUiProperty>(Rml::Transform::MakeProperty(prims));
+        auto prop = Rml::Transform::MakeProperty(prims);
+        return New<RmlUiProperty>(prop);
     }
 
-public:
+    API_FUNCTION() Span<RmlUiTransformPrimitive> GetPrimitives()
+    {
+        std::vector<Rml::TransformPrimitive> prims = transform.get()->GetPrimitives();
+        Span<RmlUiTransformPrimitive> arr(reinterpret_cast<RmlUiTransformPrimitive*>(&prims[0]), (int32)prims.size());
+        return arr;
+    }
+    
+    union
+    {
+        Rml::TransformPtr transform = nullptr;
 
+        API_FIELD(Private) int64 nativePtr;
+    };
+public:
 };
 
+/// <inheritdoc />
 API_CLASS(Namespace="RmlUi", NoSpawn) class RMLUI_API RmlUiTransforms : public ScriptingObject
 {
     DECLARE_SCRIPTING_TYPE_MINIMAL(RmlUiTransforms);
@@ -191,6 +131,7 @@ API_CLASS(Namespace="RmlUi", NoSpawn) class RMLUI_API RmlUiTransforms : public S
     {
         return RmlUiTransformTranslate3D(x, y, z, unit);
     }
+
     /// <inheritdoc />
     API_FUNCTION() static RmlUiTransformScaleX ScaleX(float value)
     {
