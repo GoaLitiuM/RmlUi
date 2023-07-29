@@ -19,7 +19,7 @@
 #include "RmlUiHelpers.h"
 
 RmlUiDocument::RmlUiDocument(const SpawnParams& params)
-    : RmlUiElement(params)
+    : Actor(params)
 {
 }
 
@@ -57,8 +57,8 @@ void RmlUiDocument::Close() const
 RmlUiElement* RmlUiDocument::CreateElement(const String& name)
 {
     auto elementPointer = GetDocument()->CreateElement(ToRmlString(name));
-    const auto wrappedElement = WrapChildElement(elementPointer.get());
-    wrappedChildElements.Add(wrappedElement);
+    const auto wrappedElement = element->WrapChildElement(elementPointer.get());
+    //element->wrappedChildElements.Add(wrappedElement);
     ownedElements.Add(MoveTemp(elementPointer));
     return wrappedElement;
 }
@@ -66,8 +66,8 @@ RmlUiElement* RmlUiDocument::CreateElement(const String& name)
 RmlUiElement* RmlUiDocument::CreateTextNode(const String& text)
 {
     auto elementPointer = GetDocument()->CreateTextNode(ToRmlString(text));
-    const auto wrappedElement = WrapChildElement(elementPointer.get());
-    wrappedChildElements.Add(wrappedElement);
+    const auto wrappedElement = element->WrapChildElement(elementPointer.get());
+    //element->wrappedChildElements.Add(wrappedElement);
     ownedElements.Add(MoveTemp(elementPointer));
     return wrappedElement;
 }
@@ -107,6 +107,13 @@ Rml::Context* RmlUiDocument::GetContext() const
     return canvas->GetContext();
 }
 
+Rml::ElementDocument* RmlUiDocument::GetDocument() const
+{
+    if (element == nullptr)
+        return nullptr;
+    return dynamic_cast<Rml::ElementDocument*>(element->GetElement());
+}
+
 bool RmlUiDocument::LoadDocument()
 {
     if (Document == nullptr)
@@ -135,7 +142,7 @@ bool RmlUiDocument::LoadDocument()
 
     // Fix decimal parsing issues by changing the locale
     std::locale oldLocale = std::locale::global(std::locale::classic());
-    element = context->LoadDocument(documentPath);
+    element = New<RmlUiElement>(context->LoadDocument(documentPath));
     std::locale::global(oldLocale);
 
     if (element == nullptr)
@@ -162,13 +169,14 @@ void RmlUiDocument::UnloadDocument()
     {
         Delete(wrappedChild);
     }*/
-    wrappedChildElements.ClearDelete();
-
+    //wrappedChildElements.ClearDelete();
+    
     for (auto& el : ownedElements)
         el.release();
     ownedElements.Clear();
 
     context->UnloadDocument(GetDocument());
+    Delete(element);
     element = nullptr;
 }
 

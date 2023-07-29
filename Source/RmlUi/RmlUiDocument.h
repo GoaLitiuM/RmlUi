@@ -20,12 +20,13 @@ class RmlUiCanvas;
 /// RmlUi Document.
 /// </summary>
 API_CLASS(NoConstructor, Attributes = "ActorContextMenu(\"New/UI/RmlUi Document\"), ActorToolbox(\"GUI\")")
-class RMLUI_API RmlUiDocument : public RmlUiElement
+class RMLUI_API RmlUiDocument : public Actor
 {
     API_AUTO_SERIALIZATION();
     DECLARE_SCENE_OBJECT(RmlUiDocument);
 
 private:
+    RmlUiElement* element = nullptr;
     Array<Rml::ElementPtr> ownedElements;
 
 public:
@@ -50,10 +51,17 @@ public:
     API_FIELD() Array<RmlUiFont> Fonts;
 
 public:
+    API_PROPERTY() RmlUiElement* Element() { return element; };
+
+    /// <summary>
+    /// Returns the wrapped Rml::Element.
+    /// </summary>
+    FORCE_INLINE Rml::Element* GetElement() const { return element->GetElement(); }
+
     /// <summary>
     /// Returns the wrapped Rml::ElementDocument.
     /// </summary>
-    FORCE_INLINE Rml::ElementDocument* GetDocument() const { return (Rml::ElementDocument*)GetWrappedElement(); }
+    Rml::ElementDocument* GetDocument() const;
 
     /// <summary>
     /// Loads the wrapped document asset.
@@ -110,6 +118,7 @@ public:
     /// Defocuses the document, prevents receiving any further input events.
     /// </summary>
     API_FUNCTION() void Defocus() const;
+
 
 private:
     RmlUiCanvas* GetCanvas() const;

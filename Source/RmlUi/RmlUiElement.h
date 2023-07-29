@@ -20,6 +20,8 @@
 
 API_CLASS(Namespace="RmlUi") class RMLUI_API RmlUiElement : public Actor
 {
+	friend class RmlUiDocument;
+
     DECLARE_SCENE_OBJECT(RmlUiElement);
 protected:
 	Rml::Element* element = nullptr;
@@ -37,7 +39,7 @@ public:
     /// <summary>
     /// Returns the wrapped Rml::Element.
     /// </summary>
-    FORCE_INLINE Rml::Element* GetWrappedElement() const { return element; }
+    FORCE_INLINE Rml::Element* GetElement() const { return element; }
 
     API_FUNCTION() void SetClass(const String& className, bool activate);
     API_FUNCTION() bool IsClassSet(const String& className) const;
