@@ -9,6 +9,7 @@
 #include <Engine/Scripting/ManagedCLR/MClass.h>
 #include <Engine/Scripting/ManagedCLR/MMethod.h>
 #include <Engine/Scripting/Scripting.h>
+#include <Core/Factory.h>
 
 CreateAssetResult ImportRmlUiAsset(CreateAssetContext& context)
 {
@@ -23,6 +24,8 @@ CreateAssetResult ImportRmlUiAsset(CreateAssetContext& context)
     auto chunk = context.Data.Header.Chunks[0];
     chunk->Data.Allocate(inputData.Length() * sizeof(char));
     Platform::MemoryCopy(chunk->Get(), inputData.Get(), chunk->Data.Length());
+
+    Rml::Factory::ClearStyleSheetCache();
 
     return CreateAssetResult::Ok;
 }
@@ -40,6 +43,8 @@ CreateAssetResult ImportRmlUiDocumentAsset(CreateAssetContext& context)
     auto chunk = context.Data.Header.Chunks[0];
     chunk->Data.Allocate(inputData.Length() * sizeof(char));
     Platform::MemoryCopy(chunk->Get(), inputData.Get(), chunk->Data.Length());
+
+    Rml::Factory::ClearTemplateCache();
 
     return CreateAssetResult::Ok;
 }
