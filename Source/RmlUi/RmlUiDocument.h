@@ -54,6 +54,11 @@ public:
     Rml::ElementDocument* GetDocument() const;
 
     /// <summary>
+    /// Returns the Rml::Context of the wrapped Rml:ElementDocument.
+    /// </summary>
+    Rml::Context* GetContext() const;
+
+    /// <summary>
     /// Loads the wrapped document asset.
     /// </summary>
     /// <returns>Returns true if the document was loaded successfully.</returns>
@@ -96,7 +101,6 @@ public:
 
 private:
     RmlUiCanvas* GetCanvas() const;
-    Rml::Context* GetContext() const;
 
 protected:
     // [Actor]
