@@ -27,6 +27,8 @@
 #include <Engine/Platform/Window.h>
 #include <Engine/Engine/Screen.h>
 
+#include <locale>
+
 namespace
 {
     bool RmlUiInitialized = false;
@@ -681,17 +683,22 @@ void RmlUiPlugin::Update()
 {
     PROFILE_CPU_NAMED("RmlUi.Update");
 
+    // Fix decimal parsing issues by changing the locale
+    std::locale oldLocale = std::locale::global(std::locale::classic());
     for (auto canvas : Canvases)
     {
         auto context = canvas->GetContext();
         context->Update();
     }
+    std::locale::global(oldLocale);
 }
 
 void RmlUiPlugin::Render(GPUContext* gpuContext, RenderContext& renderContext)
 {
     PROFILE_GPU_CPU_NAMED("RmlUi.Render");
 
+    // Fix decimal parsing issues by changing the locale
+    std::locale oldLocale = std::locale::global(std::locale::classic());
     for (auto canvas : Canvases)
     {
         PROFILE_GPU_CPU_NAMED("RmlUiCanvas");
@@ -704,4 +711,5 @@ void RmlUiPlugin::Render(GPUContext* gpuContext, RenderContext& renderContext)
         context->Render();
         FlaxRenderInterfaceInstance->End();
     }
+    std::locale::global(oldLocale);
 }
