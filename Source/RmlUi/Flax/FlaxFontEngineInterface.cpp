@@ -495,7 +495,7 @@ void WriteCharacterRect(Float2 pointer, FontCharacterEntry& entry, Color32 color
 int FlaxFontEngineInterface::GenerateString(Rml::FontFaceHandle handle, Rml::FontEffectsHandle font_effects_handle, const Rml::String& str, const Rml::Vector2f& position, const Rml::Colourb& colour, float opacity, float letter_spacing, Rml::GeometryList& geometryList)
 {
 #else
-int FlaxFontEngineInterface::GenerateString(Rml::FontFaceHandle handle, Rml::FontEffectsHandle font_effects_handle, const Rml::String & str, const Rml::Vector2f & position, const Rml::Colourb & colour, float opacity, Rml::GeometryList & geometryList)
+int FlaxFontEngineInterface::GenerateString(Rml::FontFaceHandle handle, Rml::FontEffectsHandle font_effects_handle, const Rml::String& str, const Rml::Vector2f& position, const Rml::Colourb& colour, float opacity, Rml::GeometryList& geometryList)
 {
     float letter_spacing = 0.0f;
 #endif
@@ -596,6 +596,7 @@ int FlaxFontEngineInterface::GenerateString(Rml::FontFaceHandle handle, Rml::Fon
                 Rml::Vector2i effectGlyphOffset = Rml::Vector2i(0, 0);
                 Rml::Vector2i effectGlyphSize = Rml::Vector2i((int32)sourceGlyphWidth, (int32)sourceGlyphHeight);
                 Rml::FontGlyph effectGlyph; // FIXME: The glyph metrics might be needed for calculating metrics
+                effectGlyph.color_format = Rml::ColorFormat::A8;
                 if (!fontEffectLayer->GetGlyphMetrics(effectGlyphOffset, effectGlyphSize, effectGlyph))
                 {
                     // No effect for this glyph, add a dummy entry
@@ -620,7 +621,26 @@ int FlaxFontEngineInterface::GenerateString(Rml::FontFaceHandle handle, Rml::Fon
                     // Prepare temporary storage for generated glyph data
                     static Array<byte> effectGlyphBytes;
                     effectGlyphBytes.Resize(effectGlyphSize.x * effectGlyphSize.y * 4);
-                    fontEffectLayer->GenerateGlyphTexture(effectGlyphBytes.Get(), effectGlyphSize, effectGlyphSize.x * 4, effectGlyph);
+
+                    if (fontEffectLayer->HasUniqueTexture())
+                        fontEffectLayer->GenerateGlyphTexture(effectGlyphBytes.Get(), effectGlyphSize, effectGlyphSize.x * 4, effectGlyph);
+                    else
+                    {
+                        // Copy source glyph to effect glyph
+                        byte* glyphBytes = effectGlyphBytes.Get();
+                        for (uint32 y = 0; y < sourceGlyphHeight; y++)
+                        {
+                            for (uint32 x = 0; x < sourceGlyphWidth; x++)
+                            {
+                                uint32 src = (y * sourceGlyphWidth + x);
+                                uint32 dst = src * 4;
+                                glyphBytes[dst] = sourceGlyphBytes[src];
+                                glyphBytes[dst+1] = sourceGlyphBytes[src];
+                                glyphBytes[dst+2] = sourceGlyphBytes[src];
+                                glyphBytes[dst+3] = sourceGlyphBytes[src];
+                            }
+                        }
+                    }
 
                     // Find space for the glyph in existing atlases
                     byte effectAtlasIndex = 0;
