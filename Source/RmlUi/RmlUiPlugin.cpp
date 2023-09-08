@@ -29,8 +29,8 @@
 
 #include <locale>
 
-Function<GPUTexture* (uintptr&, Float2&, const String&)> RmlUiPlugin::OnLoadTexture;
-Function<bool(uintptr)> RmlUiPlugin::OnReleaseTexture;
+Function<GPUTexture* (uintptr_t, Float2&, const String&)> RmlUiPlugin::OnLoadTexture;
+Function<bool(uintptr_t)> RmlUiPlugin::OnReleaseTexture;
 
 namespace
 {
@@ -154,7 +154,11 @@ void RmlUiPlugin::DeinitializeRmlUi()
 
     RmlUiInitialized = false;
 
-    UnregisterEvents();
+    Engine::LateUpdate.Unbind(&RmlUiPlugin::Update);
+    if (MainRenderTask::Instance != nullptr)
+        MainRenderTask::Instance->PostRender.Unbind(&RmlUiPlugin::Render);
+    UnregisterWindowEvents();
+    UnregisterPlayEvents();
 
     FlaxFontEngineInterfaceInstance->ReleaseFontResources();
 
@@ -168,6 +172,14 @@ void RmlUiPlugin::DeinitializeRmlUi()
     Delete(FlaxFileInterfaceInstance);
 
     Canvases.Clear();
+}
+
+void RmlUiPlugin::DisposeCustomTextures()
+{
+    if (!RmlUiInitialized)
+        return;
+
+    FlaxRenderInterfaceInstance->DisposeCustomTextures();
 }
 
 void RmlUiPlugin::RegisterCanvas(RmlUiCanvas* canvas)
@@ -203,25 +215,25 @@ void RmlUiPlugin::RegisterEvents()
     Engine::LateUpdate.Bind(&RmlUiPlugin::Update);
     MainRenderTask::Instance->PostRender.Bind(&RmlUiPlugin::Render);
 
-    if (Engine::MainWindow != nullptr)
-        RegisterWindowEvents();
-    else
-    {
-        // Editor plugins are initialized before the main window is created, handle registration during next frame
-        Engine::Update.Bind(&RmlUiPlugin::RegisterWindowEvents);
-    }
+    RegisterPlayEvents();
+    RegisterWindowEvents();
 }
 
 void RmlUiPlugin::RegisterWindowEvents()
 {
-    Engine::Update.Unbind(&RmlUiPlugin::RegisterWindowEvents);
+    Engine::Update.Bind(&RmlUiPlugin::OnRegisterWindowEvents);
+}
+
+void RmlUiPlugin::OnRegisterWindowEvents()
+{
+    Engine::Update.Unbind(&RmlUiPlugin::OnRegisterWindowEvents);
 
 #if USE_EDITOR
     // Register events for floating game window
     // TODO: Bind/Unbind events when window focus is lost/gained
-    auto gameWindow = GetEditorGameWindow();
-    if (gameWindow != nullptr)
+    if (GetEditorGameWindow() != nullptr)
     {
+        auto gameWindow = GetEditorGameWindow();
         gameWindow->CharInput.Bind(RmlUiPlugin::OnCharInputGameWindow);
         gameWindow->KeyDown.Bind(RmlUiPlugin::OnKeyDownGameWindow);
         gameWindow->KeyUp.Bind(RmlUiPlugin::OnKeyUpGameWindow);
@@ -234,36 +246,41 @@ void RmlUiPlugin::RegisterWindowEvents()
         gameWindow->TouchDown.Bind(RmlUiPlugin::OnTouchDownGameWindow);
         gameWindow->TouchMove.Bind(RmlUiPlugin::OnTouchMoveGameWindow);
         gameWindow->TouchUp.Bind(RmlUiPlugin::OnTouchUpGameWindow);
+        if (Engine::MainWindow != nullptr)
+        {
+            Engine::MainWindow->MouseMove.Bind(RmlUiPlugin::OnMouseMove);
+            Engine::MainWindow->TouchMove.Bind(RmlUiPlugin::OnTouchMove);
+        }
     }
+    else
 #endif
     {
-        Engine::MainWindow->CharInput.Bind(RmlUiPlugin::OnCharInput);
-        Engine::MainWindow->KeyDown.Bind(RmlUiPlugin::OnKeyDown);
-        Engine::MainWindow->KeyUp.Bind(RmlUiPlugin::OnKeyUp);
-        Engine::MainWindow->MouseDown.Bind(RmlUiPlugin::OnMouseDown);
-        Engine::MainWindow->MouseUp.Bind(RmlUiPlugin::OnMouseUp);
-        Engine::MainWindow->MouseDoubleClick.Bind(RmlUiPlugin::OnMouseDoubleClick);
-        Engine::MainWindow->MouseWheel.Bind(RmlUiPlugin::OnMouseWheel);
-        Engine::MainWindow->MouseMove.Bind(RmlUiPlugin::OnMouseMove);
-        Engine::MainWindow->MouseLeave.Bind(RmlUiPlugin::OnMouseLeave);
-        Engine::MainWindow->TouchDown.Bind(RmlUiPlugin::OnTouchDown);
-        Engine::MainWindow->TouchMove.Bind(RmlUiPlugin::OnTouchMove);
-        Engine::MainWindow->TouchUp.Bind(RmlUiPlugin::OnTouchUp);
+        if (Engine::MainWindow != nullptr)
+        {
+            Engine::MainWindow->CharInput.Bind(RmlUiPlugin::OnCharInput);
+            Engine::MainWindow->KeyDown.Bind(RmlUiPlugin::OnKeyDown);
+            Engine::MainWindow->KeyUp.Bind(RmlUiPlugin::OnKeyUp);
+            Engine::MainWindow->MouseDown.Bind(RmlUiPlugin::OnMouseDown);
+            Engine::MainWindow->MouseUp.Bind(RmlUiPlugin::OnMouseUp);
+            Engine::MainWindow->MouseDoubleClick.Bind(RmlUiPlugin::OnMouseDoubleClick);
+            Engine::MainWindow->MouseWheel.Bind(RmlUiPlugin::OnMouseWheel);
+            Engine::MainWindow->MouseMove.Bind(RmlUiPlugin::OnMouseMove);
+            Engine::MainWindow->MouseLeave.Bind(RmlUiPlugin::OnMouseLeave);
+            Engine::MainWindow->TouchDown.Bind(RmlUiPlugin::OnTouchDown);
+            Engine::MainWindow->TouchMove.Bind(RmlUiPlugin::OnTouchMove);
+            Engine::MainWindow->TouchUp.Bind(RmlUiPlugin::OnTouchUp);
+        }
     }
 }
 
-void RmlUiPlugin::UnregisterEvents()
+void RmlUiPlugin::UnregisterWindowEvents()
 {
-    Engine::LateUpdate.Unbind(&RmlUiPlugin::Update);
-    if (MainRenderTask::Instance != nullptr)
-        MainRenderTask::Instance->PostRender.Unbind(&RmlUiPlugin::Render);
-
 #if USE_EDITOR
     // Register events for floating game window
     // TODO: Bind/Unbind events when window focus is lost/gained
-    auto gameWindow = GetEditorGameWindow();
-    if (gameWindow != nullptr)
+    if (GetEditorGameWindow() != nullptr)
     {
+        auto gameWindow = GetEditorGameWindow();
         gameWindow->CharInput.Unbind(RmlUiPlugin::OnCharInputGameWindow);
         gameWindow->KeyDown.Unbind(RmlUiPlugin::OnKeyDownGameWindow);
         gameWindow->KeyUp.Unbind(RmlUiPlugin::OnKeyUpGameWindow);

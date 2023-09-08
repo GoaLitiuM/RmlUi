@@ -44,6 +44,7 @@ public:
     Rml::TextureHandle GetTextureHandle(GPUTexture* texture);
     Rml::TextureHandle RegisterTexture(GPUTexture* texture, bool isFontTexture = false);
     void ReleaseResources();
+    void DisposeCustomTextures();
 
 #if !USE_RMLUI_6_0
     void AddFontAtlasTextureHandle(Rml::TextureHandle handle, byte* textureData);
