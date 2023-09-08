@@ -17,6 +17,7 @@ class Texture;
 class FlaxRenderInterface : public Rml::RenderInterface
 {
 public:
+    friend class RmlUiPlugin;
     // [Rml::RenderInterface]
     FlaxRenderInterface();
     ~FlaxRenderInterface() override;
@@ -43,6 +44,7 @@ public:
     Rml::TextureHandle GetTextureHandle(GPUTexture* texture);
     Rml::TextureHandle RegisterTexture(GPUTexture* texture, bool isFontTexture = false);
     void ReleaseResources();
+    void DisposeCustomTextures();
 
 #if !USE_RMLUI_6_0
     void AddFontAtlasTextureHandle(Rml::TextureHandle handle, byte* textureData);

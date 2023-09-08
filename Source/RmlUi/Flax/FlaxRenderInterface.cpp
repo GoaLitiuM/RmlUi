@@ -93,6 +93,12 @@ PACK_STRUCT(struct CustomData
     Float2 Dummy;
 });
 
+struct LoadedTexture
+{
+    GPUTexture* Texture = nullptr;
+    String OriginalPath = String::Empty;
+};
+
 namespace
 {
     RenderContext* CurrentRenderContext = nullptr;
@@ -108,7 +114,7 @@ namespace
     GPUPipelineState* ColorPipeline = nullptr;
     Array<CompiledGeometry*> GeometryCache(2);
     Dictionary<GPUTexture*, AssetReference<Texture>> LoadedTextureAssets(32);
-    Array<GPUTexture*> LoadedTextures(32);
+    Array<LoadedTexture> LoadedTextures(32);
     Array<GPUTexture*> AllocatedTextures(32);
     HashSet<GPUTexture*> FontTextures(32);
 #if !USE_RMLUI_6_0
@@ -154,7 +160,7 @@ FlaxRenderInterface::FlaxRenderInterface() : RenderInterface()
     BasicShader.Get()->OnReloading.Bind<FlaxRenderInterface, &FlaxRenderInterface::InvalidateShaders>(this);
 
     // Handles with value of 0 are invalid, reserve the first slot in the arrays
-    LoadedTextures.Add(nullptr);
+    LoadedTextures.Add({});
     GeometryCache.Add(nullptr);
 }
 
@@ -197,7 +203,17 @@ void FlaxRenderInterface::CompileGeometry(CompiledGeometry* compiledGeometry, Rm
     const Rectangle defaultBounds(CurrentViewport.Location, CurrentViewport.Size);
     const RotatedRectangle defaultMask(defaultBounds);
 
-    compiledGeometry->texture = LoadedTextures.At((int32)texture_handle);
+    LoadedTexture& loadedTexture = LoadedTextures.At((int32)texture_handle);
+
+    // Cheap and reliable check done first
+    if (!loadedTexture.Texture && loadedTexture.OriginalPath != String::Empty && RmlUiPlugin::OnLoadTexture.IsBinded())
+    {
+        // Unused on texture restoration, would be too confusing and problematic otherwise
+        Float2 textureSize;
+        loadedTexture.Texture = RmlUiPlugin::OnLoadTexture(texture_handle, textureSize, loadedTexture.OriginalPath);
+    }
+
+    compiledGeometry->texture = loadedTexture.Texture;
     compiledGeometry->vertexBuffer.Data.EnsureCapacity((int32)(num_vertices * sizeof(BasicVertex)));
     compiledGeometry->indexBuffer.Data.EnsureCapacity((int32)(num_indices * sizeof(uint32)));
 
@@ -332,15 +348,36 @@ void FlaxRenderInterface::SetScissorRegion(int x, int y, int width, int height)
 
 bool FlaxRenderInterface::LoadTexture(Rml::TextureHandle& texture_handle, Rml::Vector2i& texture_dimensions, const Rml::String& source)
 {
+    Float2 textureSize;
+    GPUTexture* texture;
+    if (RmlUiPlugin::OnLoadTexture.IsBinded())
+    {
+        uintptr_t handle = (Rml::TextureHandle)LoadedTextures.Count();
+        String path(source.data(), (int32)source.length());
+        texture = RmlUiPlugin::OnLoadTexture(handle, textureSize, path);
+        if (texture)
+        {
+            texture_dimensions.x = (int)textureSize.X;
+            texture_dimensions.y = (int)textureSize.Y;
+            // Using RegisterTexture is not an option here, since it unnecessarily registeres the texture in internal logic.
+            texture_handle = handle;
+            LoadedTexture loadedTexture;
+            loadedTexture.Texture = texture;
+            loadedTexture.OriginalPath = path;
+            LoadedTextures.Add(loadedTexture);
+            return true;
+        }
+    }
+
     String contentPath = String(StringUtils::GetPathWithoutExtension(String(source.c_str()))) + ASSET_FILES_EXTENSION_WITH_DOT;
-    AssetReference<Texture> textureAsset = Content::Load<Texture>(contentPath);
+    AssetReference<Texture> textureAsset = Content::LoadAsync<Texture>(contentPath);
     if (textureAsset == nullptr)
         return false;
 
-    GPUTexture* texture = textureAsset.Get()->GetTexture();
+    texture = textureAsset.Get()->GetTexture();
     LoadedTextureAssets.Add(texture, textureAsset);
 
-    Float2 textureSize = textureAsset->Size();
+    textureSize = textureAsset->Size();
     texture_dimensions.x = (int)textureSize.X;
     texture_dimensions.y = (int)textureSize.Y;
 
@@ -377,12 +414,15 @@ bool FlaxRenderInterface::GenerateTexture(Rml::TextureHandle& texture_handle, co
 
 void FlaxRenderInterface::ReleaseTexture(Rml::TextureHandle texture_handle)
 {
-    GPUTexture* texture = LoadedTextures.At((int)texture_handle);
+    if (RmlUiPlugin::OnReleaseTexture.IsBinded() && RmlUiPlugin::OnReleaseTexture(texture_handle))
+        return;
+
+    LoadedTexture& loadedTexture = LoadedTextures.At((int)texture_handle);
     AssetReference<Texture> textureAssetRef;
-    if (LoadedTextureAssets.TryGet(texture, textureAssetRef))
+    if (LoadedTextureAssets.TryGet(loadedTexture.Texture, textureAssetRef))
     {
         textureAssetRef->DeleteObject();
-        LoadedTextureAssets.Remove(texture);
+        LoadedTextureAssets.Remove(loadedTexture.Texture);
     }
 }
 
@@ -437,7 +477,7 @@ Rml::TextureHandle FlaxRenderInterface::GetTextureHandle(GPUTexture* texture)
 
     for (int i = 1; i < LoadedTextures.Count(); i++)
     {
-        if (LoadedTextures[i] == texture)
+        if (LoadedTextures[i].Texture == texture)
             return Rml::TextureHandle(i);
     }
     return Rml::TextureHandle();
@@ -446,7 +486,9 @@ Rml::TextureHandle FlaxRenderInterface::GetTextureHandle(GPUTexture* texture)
 Rml::TextureHandle FlaxRenderInterface::RegisterTexture(GPUTexture* texture, bool isFontTexture)
 {
     Rml::TextureHandle handle = (Rml::TextureHandle)LoadedTextures.Count();
-    LoadedTextures.Add(texture);
+    LoadedTexture loadedTexture;
+    loadedTexture.Texture = texture;
+    LoadedTextures.Add(loadedTexture);
 
     if (isFontTexture)
         FontTextures.Add(texture);
@@ -461,6 +503,15 @@ void FlaxRenderInterface::ReleaseResources()
     LoadedTextures.Clear();
     AllocatedTextures.ClearDelete();
     GeometryCache.ClearDelete();
+}
+
+void FlaxRenderInterface::DisposeCustomTextures()
+{
+    for (int i = 1; i < LoadedTextures.Count(); i++)
+    {
+        if (LoadedTextures[i].OriginalPath != String::Empty)
+            LoadedTextures[i].Texture = nullptr;
+    }
 }
 
 #if !USE_RMLUI_6_0

@@ -3,6 +3,7 @@ using FlaxEngine.GUI;
 using System;
 using FlaxEngine.Utilities;
 #if FLAX_EDITOR
+using FlaxEditor.States;
 using FlaxEditor;
 using FlaxEditor.Windows;
 #endif
@@ -49,6 +50,51 @@ public static class RmlUiHelpers
         }
         return false;
     }
-    
+
+    /// <summary>
+    /// Registers for editor events for start/end of the simulation
+    /// </summary>
+    public static void RegisterPlayEvents()
+    {
+        PlayingState playingState = (PlayingState)Editor.Instance?.StateMachine?.GetState<PlayingState>();
+        if(playingState != null)
+        {
+            playingState.SceneDuplicating += OnStartPlay;
+            playingState.SceneRestored += OnStopPlay;
+        }
+    }
+
+    /// <summary>
+    /// Unregisters from editor events for start/end of the simulation
+    /// </summary>
+    public static void UnregisterPlayEvents()
+    {
+        PlayingState playingState = (PlayingState)Editor.Instance?.StateMachine?.GetState<PlayingState>();
+        if(playingState != null)
+        {
+            playingState.SceneDuplicating -= OnStartPlay;
+            playingState.SceneRestored -= OnStopPlay;
+        }
+    }
+
+    /// <summary>
+    /// Fires registartion code for when the editor simulation starts
+    /// </summary>
+    public static void OnStartPlay()
+    {
+        RmlUiPlugin.UnregisterWindowEvents();
+        RmlUiPlugin.RegisterWindowEvents();
+    }
+
+    /// <summary>
+    /// Fires registartion code for when the editor simulation starts
+    /// </summary>
+    public static void OnStopPlay()
+    {
+        RmlUiPlugin.UnregisterWindowEvents();
+        RmlUiPlugin.RegisterWindowEvents();
+        RmlUiPlugin.DisposeCustomTextures();
+    }
+
 #endif
 }
