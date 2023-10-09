@@ -47,6 +47,15 @@ float4 PS_Image(VS2PS input) : SV_Target0
 }
 
 META_PS(true, FEATURE_LEVEL_ES2)
+float4 PS_Color(VS2PS input) : SV_Target0
+{
+    //PerformClipping(input);
+
+	float4 color = input.Color;
+    return color;
+}
+
+META_PS(true, FEATURE_LEVEL_ES2)
 float4 PS_Font(VS2PS input) : SV_Target0
 {
     PerformClipping(input);
@@ -54,12 +63,4 @@ float4 PS_Font(VS2PS input) : SV_Target0
     float4 color = input.Color;
     color.a *= Image.Sample(SamplerLinearClamp, input.TexCoord).r;
     return color;
-}
-
-META_PS(true, FEATURE_LEVEL_ES2)
-float4 PS_Color(VS2PS input) : SV_Target0
-{
-    PerformClipping(input);
-
-    return input.Color;
 }
