@@ -18,7 +18,6 @@
 #include <Engine/Render2D/FontAsset.h>
 #include <Engine/Render2D/FontManager.h>
 #include <Engine/Render2D/FontTextureAtlas.h>
-#include <Engine/Render2D/IncludeFreeType.h>
 #include <Engine/Profiler/ProfilerCPU.h>
 
 // FontManager scales the face size by DPI
@@ -123,10 +122,9 @@ bool FlaxFontEngineInterface::LoadFontFace(const Rml::String& file_name, bool fa
     if (fontAsset == nullptr)
         return false;
 
-    long fontStyleFlags = fontAsset->GetFTFace()->style_flags;
-
-    bool isItalic = (fontStyleFlags & FT_STYLE_FLAG_ITALIC) != 0;
-    bool isBold = (fontStyleFlags & FT_STYLE_FLAG_BOLD) != 0;
+    FontFlags fontStyleFlags = fontAsset->GetStyle();
+    bool isItalic = EnumHasAnyFlags(fontStyleFlags, FontFlags::Italic);
+    bool isBold = EnumHasAnyFlags(fontStyleFlags, FontFlags::Bold);
     if (weight == Rml::Style::FontWeight::Auto)
     {
         if (isBold)
