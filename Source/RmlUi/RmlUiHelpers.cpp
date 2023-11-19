@@ -417,3 +417,29 @@ bool HasEditorGameViewportFocus()
     return false;
     
 }
+
+void RegisterPlayEvents()
+{
+#if USE_EDITOR
+    MClass* helperClass = Scripting::FindClass("RmlUi.RmlUiHelpers");
+    if (helperClass)
+    {
+        MMethod* method = helperClass->GetMethod("RegisterPlayEvents");
+        if (method)
+            method->Invoke(nullptr, nullptr, nullptr);
+    }
+#endif
+}
+
+void UnregisterPlayEvents()
+{
+#if USE_EDITOR
+    MClass* helperClass = Scripting::FindClass("RmlUi.RmlUiHelpers");
+    if (helperClass)
+    {
+        MMethod* method = helperClass->GetMethod("UnregisterPlayEvents");
+        if (method)
+            method->Invoke(nullptr, nullptr, nullptr);
+    }
+#endif
+}

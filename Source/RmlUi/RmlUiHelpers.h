@@ -9,3 +9,5 @@ Rml::Input::KeyIdentifier TranslateFlaxKey(KeyboardKeys key);
 int TranslateFlaxMouseButton(MouseButton button);
 Window* GetEditorGameWindow();
 bool HasEditorGameViewportFocus();
+void RegisterPlayEvents();
+void UnregisterPlayEvents();
