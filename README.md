@@ -4,7 +4,7 @@ This is the [RmlUi](https://github.com/mikke89/RmlUi) plugin for [Flax Engine](h
 
 The plugin is still under development and currently has support for C++-scripting.
 
-Minimum supported Flax version: `1.6`.
+Minimum supported Flax version: `1.7.1`.
 
 ## Installation
 

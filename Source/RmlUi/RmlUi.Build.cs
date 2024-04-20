@@ -36,9 +36,8 @@ public class RmlUi : GameModule
 
         BuildNativeCode = true;
 
-		options.PublicDependencies.Add("Core");
-		options.PublicDependencies.Add("Graphics");
-        options.PrivateDependencies.Add("freetype");
+        options.PublicDependencies.Add("Core");
+        options.PublicDependencies.Add("Graphics");
 
         if (options.Target.IsEditor)
         {
