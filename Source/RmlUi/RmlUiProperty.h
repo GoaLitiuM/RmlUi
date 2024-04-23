@@ -532,19 +532,19 @@ public partial class RmlUiProperty\
 
     API_FUNCTION(Private) static void NewPropertyInternal(RmlUiProperty* prop, float value, RmlUiUnit unit, int specificity = -1)
     {
-        prop->property = New<Rml::Property>(value, static_cast<Rml::Property::Unit>(unit), specificity);
+        prop->property = New<Rml::Property>(value, static_cast<Rml::Unit>(unit), specificity);
         prop->ownedData = true;
     }
 
     API_FUNCTION(Private) static void NewPropertyInternal(RmlUiProperty* prop, Color value, RmlUiUnit unit, int specificity = -1)
     {
-        prop->property = New<Rml::Property>(Rml::Colourb((Rml::byte)(value.R * 255), (Rml::byte)(value.G * 255), (Rml::byte)(value.B * 255), (Rml::byte)(value.A * 255)), static_cast<Rml::Property::Unit>(unit), specificity);
+        prop->property = New<Rml::Property>(Rml::Colourb((Rml::byte)(value.R * 255), (Rml::byte)(value.G * 255), (Rml::byte)(value.B * 255), (Rml::byte)(value.A * 255)), static_cast<Rml::Unit>(unit), specificity);
         prop->ownedData = true;
     }
 
     API_FUNCTION(Private) static void NewPropertyInternal(RmlUiProperty* prop, Color32 value, RmlUiUnit unit, int specificity = -1)
     {
-        prop->property = New<Rml::Property>(Rml::Colourb(value.R, value.G, value.B, value.A), static_cast<Rml::Property::Unit>(unit), specificity);
+        prop->property = New<Rml::Property>(Rml::Colourb(value.R, value.G, value.B, value.A), static_cast<Rml::Unit>(unit), specificity);
         prop->ownedData = true;
     }
 

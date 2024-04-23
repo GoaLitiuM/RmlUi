@@ -48,9 +48,9 @@ struct FontFace
 namespace
 {
     Array<AssetReference<FontTextureAtlas>> EffectAtlases(4);
-    Array<Rml::Texture*> EffectAtlasTextures(4);
+    Array<Rml::Texture> EffectAtlasTextures(4);
     Array<Rml::String> EffectAtlasTextureNames(4);
-    Array<Rml::Texture*> AtlasTextures(4);
+    Array<Rml::Texture> AtlasTextures(4);
     Array<Rml::String> AtlasTextureNames(4);
     Dictionary<StringAnsi, Array<FontFace>> FontFaces(32);
     StringAnsi FallbackFontFaceFamily;
@@ -96,8 +96,8 @@ void FlaxFontEngineInterface::ReleaseFontResources()
             atlas->DeleteObject();
     EffectAtlases.Clear();
 
-    AtlasTextures.ClearDelete();
-    EffectAtlasTextures.ClearDelete();
+    AtlasTextures.Clear();
+    EffectAtlasTextures.Clear();
     FontMetrics.Clear();
     FontEffects.Clear();
     FontFaces.Clear();
@@ -150,10 +150,10 @@ bool FlaxFontEngineInterface::LoadFontFace(const Rml::String& file_name, bool fa
     return true;
 }
 
-bool FlaxFontEngineInterface::LoadFontFace(const Rml::byte* data, int data_size, const Rml::String& family, Rml::Style::FontStyle style, Rml::Style::FontWeight weight, bool fallback_face)
+bool FlaxFontEngineInterface::LoadFontFace(Rml::Span<const Rml::byte> data, const Rml::String& family, Rml::Style::FontStyle style, Rml::Style::FontWeight weight, bool fallback_face)
 {
     AssetReference<FontAsset> fontAsset = Content::CreateVirtualAsset<FontAsset>();
-    BytesContainer fontData(data, data_size);
+    BytesContainer fontData(data.begin(), (int)data.size());
     if (fontAsset->Init(fontData))
         return false;
 
@@ -320,14 +320,8 @@ const Rml::FontMetrics& FlaxFontEngineInterface::GetFontMetrics(Rml::FontFaceHan
     return FontMetrics[font];
 }
 
-#if USE_RMLUI_6_0
-int FlaxFontEngineInterface::GetStringWidth(Rml::FontFaceHandle handle, const Rml::String& str, float letter_spacing, Rml::Character prior_character)
+int FlaxFontEngineInterface::GetStringWidth(Rml::FontFaceHandle handle, const Rml::String& str, const Rml::TextShapingContext& text_shaping_context, Rml::Character prior_character)
 {
-#else
-int FlaxFontEngineInterface::GetStringWidth(Rml::FontFaceHandle handle, const Rml::String& str, Rml::Character prior_character)
-{
-    float letter_spacing = 0.0f;
-#endif
     const StringAnsiView text(str.c_str(), (int32)str.length());
     auto font = (Font*)handle;
     FontCharacterEntry entry, previous;
@@ -350,21 +344,14 @@ int FlaxFontEngineInterface::GetStringWidth(Rml::FontFaceHandle handle, const Rm
 
         if (!StringUtils::IsWhitespace(c) && previous.IsValid)
             lineWidth += (float)font->GetKerning(previous.Character, entry.Character);
-        lineWidth += (float)entry.AdvanceX + letter_spacing;
+        lineWidth += (float)entry.AdvanceX + text_shaping_context.letter_spacing;
         previous = entry;
     }
     return (int)lineWidth;
 }
 
-#if USE_RMLUI_6_0
 bool FontAtlasTextureCallback(Rml::RenderInterface* render_interface, const Rml::String& name, Rml::TextureHandle& texture_handle, Rml::Vector2i& texture_dimensions)
 {
-#else
-bool FontAtlasTextureCallback(const Rml::String& name, Rml::UniquePtr<const byte[]>& data, Rml::Vector2i& texture_dimensions)
-{
-    Rml::RenderInterface* render_interface = Rml::GetRenderInterface();
-    Rml::TextureHandle texture_handle;
-#endif
     // RmlUi requests data to be generated here, but we have already copied the glyph data to the texture earlier,
     // so we prepare the texture handle pointing to the atlas texture in this callback instead of generating anything.
 
@@ -409,12 +396,12 @@ bool FontAtlasTextureCallback(const Rml::String& name, Rml::UniquePtr<const byte
     return !!texture_handle;
 }
 
-Rml::Geometry* GetOrAddGeometrySlot(Array<Rml::Geometry>& geometryArray, Rml::Texture* texture)
+Rml::TexturedMesh* GetOrAddGeometrySlot(Array<Rml::TexturedMesh>& geometryArray, Rml::Texture texture)
 {
     int geometryIndex;
     for (geometryIndex = 0; geometryIndex < geometryArray.Count(); geometryIndex++)
     {
-        if (geometryArray[geometryIndex].GetTexture() == texture)
+        if (geometryArray[geometryIndex].texture == texture)
             break;
     }
     if (geometryIndex < geometryArray.Count())
@@ -422,12 +409,12 @@ Rml::Geometry* GetOrAddGeometrySlot(Array<Rml::Geometry>& geometryArray, Rml::Te
 
     geometryArray.Resize(geometryArray.Count() + 1);
     geometryIndex = geometryArray.Count() - 1;
-    Rml::Geometry* geometry = &geometryArray[geometryIndex];
-    geometry->SetTexture(texture);
+    Rml::TexturedMesh* geometry = &geometryArray[geometryIndex];
+    geometry->texture = texture;
     return geometry;
 }
 
-void WriteCharacterRect(Float2 pointer, FontCharacterEntry& entry, Color32 color, Float2 invAtlasSize, Rml::Geometry* geometry)
+void WriteCharacterRect(Float2 pointer, FontCharacterEntry& entry, Color32 color, Float2 invAtlasSize, Rml::TexturedMesh* geometry)
 {
     // Calculate character size and atlas coordinates
     const float x = pointer.X + (float)entry.OffsetX;
@@ -444,35 +431,35 @@ void WriteCharacterRect(Float2 pointer, FontCharacterEntry& entry, Color32 color
     Float2 leftBottomUV = Float2(upperLeftUV.X, rightBottomUV.Y);
     Float2 rightUpperUV = Float2(rightBottomUV.X, upperLeftUV.Y);
 
-    auto& vertices = geometry->GetVertices();
-    auto& indices = geometry->GetIndices();
+    auto& vertices = geometry->mesh.vertices;
+    auto& indices = geometry->mesh.indices;
     vertices.reserve(vertices.size() + 4);
     const auto startVertex = (int32)vertices.size();
     {
         Rml::Vertex vertex;
         vertex.position = *(Rml::Vector2f*)(&charBottomRight);
-        vertex.colour = *(Rml::Colourb*)(&color);
+        vertex.colour = *(Rml::ColourbPremultiplied*)(&color);
         vertex.tex_coord = *(Rml::Vector2f*)(&rightBottomUV);
         vertices.push_back(vertex);
     }
     {
         Rml::Vertex vertex;
         vertex.position = *(Rml::Vector2f*)(&charBottomLeft);
-        vertex.colour = *(Rml::Colourb*)(&color);
+        vertex.colour = *(Rml::ColourbPremultiplied*)(&color);
         vertex.tex_coord = *(Rml::Vector2f*)(&leftBottomUV);
         vertices.push_back(vertex);
     }
     {
         Rml::Vertex vertex;
         vertex.position = *(Rml::Vector2f*)(&charUpperLeft);
-        vertex.colour = *(Rml::Colourb*)(&color);
+        vertex.colour = *(Rml::ColourbPremultiplied*)(&color);
         vertex.tex_coord = *(Rml::Vector2f*)(&upperLeftUV);
         vertices.push_back(vertex);
     }
     {
         Rml::Vertex vertex;
         vertex.position = *(Rml::Vector2f*)(&charUpperRight);
-        vertex.colour = *(Rml::Colourb*)(&color);
+        vertex.colour = *(Rml::ColourbPremultiplied*)(&color);
         vertex.tex_coord = *(Rml::Vector2f*)(&rightUpperUV);
         vertices.push_back(vertex);
     }
@@ -489,23 +476,19 @@ void WriteCharacterRect(Float2 pointer, FontCharacterEntry& entry, Color32 color
 
 
 
-#if USE_RMLUI_6_0
-int FlaxFontEngineInterface::GenerateString(Rml::FontFaceHandle handle, Rml::FontEffectsHandle font_effects_handle, const Rml::String& str, const Rml::Vector2f& position, const Rml::Colourb& colour, float opacity, float letter_spacing, Rml::GeometryList& geometryList)
+int FlaxFontEngineInterface::GenerateString(Rml::RenderManager& render_manager, Rml::FontFaceHandle handle, Rml::FontEffectsHandle font_effects_handle, const Rml::String& str,
+    const Rml::Vector2f& position, Rml::ColourbPremultiplied colour, float opacity, const Rml::TextShapingContext& text_shaping_context,
+    Rml::TexturedMeshList& mesh_list)
 {
-#else
-int FlaxFontEngineInterface::GenerateString(Rml::FontFaceHandle handle, Rml::FontEffectsHandle font_effects_handle, const Rml::String& str, const Rml::Vector2f& position, const Rml::Colourb& colour, float opacity, Rml::GeometryList& geometryList)
-{
-    float letter_spacing = 0.0f;
-#endif
     const StringAnsiView text(str.c_str(), (int32)str.length());
     if (text.Length() == 0)
         return 0;
 
     PROFILE_CPU_NAMED("RmlUi.GenerateString");
 
-    static Array<Rml::Geometry> geometryBack;
-    static Array<Rml::Geometry> geometryMiddle;
-    static Array<Rml::Geometry> geometryFront;
+    static Array<Rml::TexturedMesh> geometryBack;
+    static Array<Rml::TexturedMesh> geometryMiddle;
+    static Array<Rml::TexturedMesh> geometryFront;
     geometryBack.Resize(0);
     geometryMiddle.Resize(0);
     geometryFront.Resize(0);
@@ -517,8 +500,8 @@ int FlaxFontEngineInterface::GenerateString(Rml::FontFaceHandle handle, Rml::Fon
     byte fontAtlasIndex = 0;
     Float2 invAtlasSize = Float2::One;
     FontCharacterEntry entry, previousEntry;
-    Rml::Geometry* geometry = nullptr;
-    Rml::Geometry* geometryEffect = nullptr;
+    Rml::TexturedMesh* geometry = nullptr;
+    Rml::TexturedMesh* geometryEffect = nullptr;
     float pointerX = position.x;
     for (int32 charIndex = 0; charIndex < text.Length(); charIndex++)
     {
@@ -540,10 +523,13 @@ int FlaxFontEngineInterface::GenerateString(Rml::FontFaceHandle handle, Rml::Fon
                 fontAtlas->EnsureTextureCreated();
                 if (AtlasTextures.Count() <= fontAtlasIndex)
                 {
+
                     // Texture data already exists, the callback only assigns the correct handle pointing to this atlas
-                    auto texture = New<Rml::Texture>();
+                    /*auto texture = New<Rml::Texture>();
                     texture->Set(GetAtlasTextureNameHandle(fontAtlasIndex), FontAtlasTextureCallback);
-                    AtlasTextures.Add(texture);
+                    
+                    AtlasTextures.Add(texture);*/
+                    AtlasTextures.Add(render_manager.LoadTexture(GetAtlasTextureNameHandle(fontAtlasIndex)));
                 }
 
                 geometry = GetOrAddGeometrySlot(geometryMiddle, AtlasTextures[fontAtlasIndex]);
@@ -557,7 +543,7 @@ int FlaxFontEngineInterface::GenerateString(Rml::FontFaceHandle handle, Rml::Fon
         if (!isWhitespace && previousEntry.IsValid)
             pointerX += (float)font->GetKerning(previousEntry.Character, entry.Character);
         Float2 characterPosition(pointerX, position.y);
-        pointerX += (float)entry.AdvanceX + letter_spacing;
+        pointerX += (float)entry.AdvanceX + text_shaping_context.letter_spacing;
         previousEntry = entry;
 
         if (isWhitespace)
@@ -575,7 +561,7 @@ int FlaxFontEngineInterface::GenerateString(Rml::FontFaceHandle handle, Rml::Fon
             PROFILE_CPU_NAMED("RmlUi.GenerateString.FontEffect");
 
             const Rml::FontEffect* fontEffectLayer = layer.effect;
-            Array<Rml::Geometry>& geometryLayer = fontEffectLayer->GetLayer() == Rml::FontEffect::Layer::Back ? geometryBack : geometryFront;
+            Array<Rml::TexturedMesh>& geometryLayer = fontEffectLayer->GetLayer() == Rml::FontEffect::Layer::Back ? geometryBack : geometryFront;
 
             // Multiply layer color with the text color
             Rml::Colourb layerColor = fontEffectLayer->GetColour();
@@ -663,9 +649,7 @@ int FlaxFontEngineInterface::GenerateString(Rml::FontFaceHandle handle, Rml::Fon
                         EffectAtlases.Add(effectFontAtlas);
 
                         // Texture data already exists, the callback only assigns the correct handle pointing to this atlas
-                        auto atlasTexture = New<Rml::Texture>();
-                        EffectAtlasTextures.Add(atlasTexture);
-                        atlasTexture->Set(GetEffectAtlasTextureNameHandle(effectAtlasIndex), FontAtlasTextureCallback);
+                        EffectAtlasTextures.Add(render_manager.LoadTexture(GetEffectAtlasTextureNameHandle(effectAtlasIndex)));
 
                         slot = effectFontAtlas->AddEntry(effectGlyphSize.x, effectGlyphSize.y, effectGlyphBytes);
                     }
@@ -700,23 +684,23 @@ int FlaxFontEngineInterface::GenerateString(Rml::FontFaceHandle handle, Rml::Fon
     }
 
     // Cull empty geometry collections from the list
-    for (int i = 0; i < geometryList.size(); i++)
+    for (int i = 0; i < mesh_list.size(); i++)
     {
-        if (!geometryList[i].GetVertices().empty())
+        if (!mesh_list[i].mesh.vertices.empty())
             continue;
 
-        geometryList.erase(geometryList.begin() + i);
+        mesh_list.erase(mesh_list.begin() + i);
         i--;
     }
 
     // Insert the generated geometry to the list layer by layer
-    geometryList.reserve(geometryList.size() + geometryBack.Count() + geometryMiddle.Count() + geometryFront.Count());
-    for (Rml::Geometry& geometry : geometryBack)
-        geometryList.push_back(MoveTemp(geometry));
-    for (Rml::Geometry& geometry : geometryMiddle)
-        geometryList.push_back(MoveTemp(geometry));
-    for (Rml::Geometry& geometry : geometryFront)
-        geometryList.push_back(MoveTemp(geometry));
+    mesh_list.reserve(mesh_list.size() + geometryBack.Count() + geometryMiddle.Count() + geometryFront.Count());
+    for (Rml::TexturedMesh& geometry : geometryBack)
+        mesh_list.push_back(MoveTemp(geometry));
+    for (Rml::TexturedMesh& geometry : geometryMiddle)
+        mesh_list.push_back(MoveTemp(geometry));
+    for (Rml::TexturedMesh& geometry : geometryFront)
+        mesh_list.push_back(MoveTemp(geometry));
 
     return (int)pointerX;
 }

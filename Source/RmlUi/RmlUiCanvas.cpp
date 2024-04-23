@@ -15,6 +15,7 @@
 #endif
 #include <Engine/Engine/Screen.h>
 #include <Engine/Profiler/ProfilerCPU.h>
+#include "Engine/Core/Log.h"
 
 RmlUiCanvas::RmlUiCanvas(const SpawnParams& params)
     : Actor(params)

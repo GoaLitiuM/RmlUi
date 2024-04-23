@@ -7,6 +7,7 @@
 
 #include <ThirdParty/RmlUi/Core/Input.h>
 #include <ThirdParty/RmlUi/Core/Types.h>
+#include <ThirdParty/RmlUi/Core/Unit.h>
 
 // Conflicts with both Flax and RmlUi Math.h
 #undef RadiansToDegrees

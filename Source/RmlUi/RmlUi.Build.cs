@@ -49,7 +49,7 @@ public class RmlUi : GameModule
         options.PublicIncludePaths.Add(FolderPath);
         options.PublicIncludePaths.Add(Path.Combine(FolderPath, "..", "ThirdParty", "RmlUi"));
 
-        //options.PrivateDefinitions.Add("USE_RMLUI_6_0");
+        options.PrivateDefinitions.Add("USE_RMLUI_6_0");
         string libPath = Path.Combine(FolderPath, "..", "ThirdParty", "Platforms", options.Platform.Target.ToString(), "Binaries", "ThirdParty", options.Architecture.ToString());
 
         AddLibrary(options, Path.Combine(libPath, "RmlCore"));

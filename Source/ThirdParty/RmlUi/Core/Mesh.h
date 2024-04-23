@@ -4,7 +4,7 @@
  * For the latest information, see http://github.com/mikke89/RmlUi
  *
  * Copyright (c) 2008-2010 CodePoint Ltd, Shift Technology Ltd
- * Copyright (c) 2019 The RmlUi Team, and contributors
+ * Copyright (c) 2019-2023 The RmlUi Team, and contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -15,7 +15,7 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,27 +26,28 @@
  *
  */
 
-#ifndef RMLUI_CORE_ELEMENTS_ELEMENTDATAGRIDEXPANDBUTTON_H
-#define RMLUI_CORE_ELEMENTS_ELEMENTDATAGRIDEXPANDBUTTON_H
+#ifndef RMLUI_CORE_MESH_H
+#define RMLUI_CORE_MESH_H
 
-#include "../Element.h"
-#include "../Header.h"
+#include "Header.h"
+#include "Texture.h"
+#include "Vertex.h"
 
 namespace Rml {
 
-/**
-	@author Robert Curry
- */
+struct Mesh {
+	Vector<Vertex> vertices;
+	Vector<int> indices;
 
-class RMLUICORE_API ElementDataGridExpandButton : public Element
-{
-public:
-	ElementDataGridExpandButton(const String& tag);
-	virtual ~ElementDataGridExpandButton();
-
-protected:
-	void ProcessDefaultAction(Event& event) override;
+	explicit operator bool() const { return !indices.empty(); }
 };
+
+struct TexturedMesh {
+	Mesh mesh;
+	Texture texture;
+};
+
+using TexturedMeshList = Vector<TexturedMesh>;
 
 } // namespace Rml
 #endif

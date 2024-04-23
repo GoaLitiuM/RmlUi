@@ -212,7 +212,7 @@ void RmlUiPlugin::RegisterEvents()
 void RmlUiPlugin::RegisterWindowEvents()
 {
     Engine::Update.Unbind(&RmlUiPlugin::RegisterWindowEvents);
-
+/*
 #if USE_EDITOR
     // Register events for floating game window
     // TODO: Bind/Unbind events when window focus is lost/gained
@@ -232,7 +232,7 @@ void RmlUiPlugin::RegisterWindowEvents()
         gameWindow->TouchMove.Bind(RmlUiPlugin::OnTouchMoveGameWindow);
         gameWindow->TouchUp.Bind(RmlUiPlugin::OnTouchUpGameWindow);
     }
-#endif
+#endif*/
     {
         Engine::MainWindow->CharInput.Bind(RmlUiPlugin::OnCharInput);
         Engine::MainWindow->KeyDown.Bind(RmlUiPlugin::OnKeyDown);
@@ -254,7 +254,7 @@ void RmlUiPlugin::UnregisterEvents()
     Engine::LateUpdate.Unbind(&RmlUiPlugin::Update);
     if (MainRenderTask::Instance != nullptr)
         MainRenderTask::Instance->PostRender.Unbind(&RmlUiPlugin::Render);
-
+/*
 #if USE_EDITOR
     // Register events for floating game window
     // TODO: Bind/Unbind events when window focus is lost/gained
@@ -274,7 +274,7 @@ void RmlUiPlugin::UnregisterEvents()
         gameWindow->TouchMove.Unbind(RmlUiPlugin::OnTouchMoveGameWindow);
         gameWindow->TouchUp.Unbind(RmlUiPlugin::OnTouchUpGameWindow);
     }
-#endif
+#endif*/
     if (Engine::MainWindow != nullptr)
     {
         Engine::MainWindow->CharInput.Unbind(RmlUiPlugin::OnCharInput);
@@ -349,8 +349,10 @@ void RmlUiPlugin::OnMouseDown(const Float2& mousePosition, MouseButton button)
     Float2 realPosition = mousePosition;
 #endif
 
-    if (FocusedCanvas != nullptr)
-        FocusedCanvas->OnMouseDown(realPosition, button);
+    for (auto canvas : Canvases)
+    {
+        canvas->OnMouseDown(realPosition, button);
+    }
 }
 
 void RmlUiPlugin::OnMouseUp(const Float2& mousePosition, MouseButton button)
@@ -371,8 +373,10 @@ void RmlUiPlugin::OnMouseUp(const Float2& mousePosition, MouseButton button)
     Float2 realPosition = mousePosition;
 #endif
 
-    if (FocusedCanvas != nullptr)
-        FocusedCanvas->OnMouseUp(realPosition, button);
+    for (auto canvas : Canvases)
+    {
+        canvas->OnMouseUp(realPosition, button);
+    }
 }
 
 void RmlUiPlugin::OnMouseDoubleClick(const Float2& mousePosition, MouseButton button)
@@ -415,8 +419,10 @@ void RmlUiPlugin::OnMouseWheel(const Float2& mousePosition, float delta)
     Float2 realPosition = mousePosition;
 #endif
 
-    if (FocusedCanvas != nullptr)
-        FocusedCanvas->OnMouseWheel(realPosition, -delta);
+    for (auto canvas : Canvases)
+    {
+        canvas->OnMouseWheel(realPosition, -delta);
+    }
 }
 
 void RmlUiPlugin::OnMouseMove(const Float2& mousePosition)
@@ -437,8 +443,10 @@ void RmlUiPlugin::OnMouseMove(const Float2& mousePosition)
     Float2 realPosition = mousePosition;
 #endif
 
-    if (FocusedCanvas != nullptr)
-        FocusedCanvas->OnMouseMove(realPosition);
+    for (auto canvas : Canvases)
+    {
+        canvas->OnMouseMove(realPosition);
+    }
 }
 
 void RmlUiPlugin::OnMouseLeave()
@@ -450,8 +458,10 @@ void RmlUiPlugin::OnMouseLeave()
         return;
 #endif
 
-    if (FocusedCanvas != nullptr)
-        FocusedCanvas->OnMouseLeave();
+    for (auto canvas : Canvases)
+    {
+        canvas->OnMouseLeave();
+    }
 }
 
 void RmlUiPlugin::OnTouchDown(const Float2& pointerPosition, int32 pointerIndex)
@@ -564,8 +574,10 @@ void RmlUiPlugin::OnMouseDownGameWindow(const Float2& mousePosition, MouseButton
     // FIXME: Offset by the height of the game window title bar
     Float2 realPosition = mousePosition - Float2(0, 25);
 
-    if (FocusedCanvas != nullptr)
-        FocusedCanvas->OnMouseDown(realPosition, button);
+    for (auto canvas : Canvases)
+    {
+        canvas->OnMouseDown(realPosition, button);
+    }
 }
 
 void RmlUiPlugin::OnMouseUpGameWindow(const Float2& mousePosition, MouseButton button)
@@ -578,8 +590,10 @@ void RmlUiPlugin::OnMouseUpGameWindow(const Float2& mousePosition, MouseButton b
     // FIXME: Offset by the height of the game window title bar
     Float2 realPosition = mousePosition - Float2(0, 25);
 
-    if (FocusedCanvas != nullptr)
-        FocusedCanvas->OnMouseUp(realPosition, button);
+    for (auto canvas : Canvases)
+    {
+        canvas->OnMouseUp(realPosition, button);
+    }
 }
 
 void RmlUiPlugin::OnMouseDoubleClickGameWindow(const Float2& mousePosition, MouseButton button)
@@ -603,8 +617,12 @@ void RmlUiPlugin::OnMouseWheelGameWindow(const Float2& mousePosition, float delt
     if (!HasEditorGameViewportFocus())
         return;
 
-    if (FocusedCanvas != nullptr)
-        FocusedCanvas->OnMouseWheel(mousePosition, -delta);
+    Float2 realPosition = mousePosition - Float2(0, 25);
+
+    for (auto canvas : Canvases)
+    {
+        canvas->OnMouseWheel(realPosition, delta);
+    }
 }
 
 void RmlUiPlugin::OnMouseMoveGameWindow(const Float2& mousePosition)
@@ -621,8 +639,10 @@ void RmlUiPlugin::OnMouseMoveGameWindow(const Float2& mousePosition)
     // FIXME: Offset by the height of the game window title bar
     Float2 realPosition = mousePosition - Float2(0, 25);
 
-    if (FocusedCanvas != nullptr)
-        FocusedCanvas->OnMouseMove(realPosition);
+    for (auto canvas : Canvases)
+    {
+        canvas->OnMouseMove(realPosition);
+    }
 }
 
 void RmlUiPlugin::OnMouseLeaveGameWindow()
@@ -632,8 +652,10 @@ void RmlUiPlugin::OnMouseLeaveGameWindow()
     if (!HasEditorGameViewportFocus())
         return;
 
-    if (FocusedCanvas != nullptr)
-        FocusedCanvas->OnMouseLeave();
+    for (auto canvas : Canvases)
+    {
+        canvas->OnMouseLeave();
+    }
 }
 
 void RmlUiPlugin::OnTouchDownGameWindow(const Float2& pointerPosition, int32 pointerIndex)

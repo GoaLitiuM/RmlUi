@@ -77,12 +77,12 @@ void RmlUiElement::SetOffset(Float2 offset, RmlUiElement* offsetParent, bool off
 
 Float2 RmlUiElement::GetRelativeOffset(RmlUiBoxArea area)
 {
-    return ToFloat2(element->GetRelativeOffset(static_cast<Rml::Box::Area>(area)));
+    return ToFloat2(element->GetRelativeOffset(static_cast<Rml::BoxArea>(area)));
 }
 
 Float2 RmlUiElement::GetAbsoluteOffset(RmlUiBoxArea area)
 {
-    return ToFloat2(element->GetAbsoluteOffset(static_cast<Rml::Box::Area>(area)));
+    return ToFloat2(element->GetAbsoluteOffset(static_cast<Rml::BoxArea>(area)));
 }
 
 bool RmlUiElement::SetProperty(const String& name, const String& value)
@@ -143,12 +143,12 @@ const Dictionary<RmlUiPropertyId, RmlUiProperty*> RmlUiElement::GetLocalStylePro
 
 float RmlUiElement::ResolveNumericProperty(const RmlUiProperty& property, float baseValue)
 {
-    return element->ResolveNumericProperty(property.property, baseValue);
+    return element->ResolveNumericValue(property.property->GetNumericValue(), baseValue);
 }
 
 float RmlUiElement::ResolveNumericProperty(const String& propertyName)
 {
-    return element->ResolveNumericProperty(ToRmlString(propertyName));
+    return element->ResolveNumericValue(element->GetProperty(ToRmlString(propertyName))->GetNumericValue(), 1);
 }
 
 float RmlUiElement::GetAbsoluteLeft()

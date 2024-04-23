@@ -4,7 +4,7 @@
  * For the latest information, see http://github.com/mikke89/RmlUi
  *
  * Copyright (c) 2008-2010 CodePoint Ltd, Shift Technology Ltd
- * Copyright (c) 2019 The RmlUi Team, and contributors
+ * Copyright (c) 2019-2023 The RmlUi Team, and contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -15,7 +15,7 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,8 +29,8 @@
 #ifndef RMLUI_CORE_FACTORY_H
 #define RMLUI_CORE_FACTORY_H
 
-#include "XMLParser.h"
 #include "Header.h"
+#include "XMLParser.h"
 
 namespace Rml {
 
@@ -49,23 +49,25 @@ class EventListener;
 class EventListenerInstancer;
 class FontEffect;
 class FontEffectInstancer;
+class Filter;
+class FilterInstancer;
 class StyleSheetContainer;
 class PropertyDictionary;
 class PropertySpecification;
 class DecoratorInstancerInterface;
+class RenderManager;
 enum class EventId : uint16_t;
 
 /**
-	The Factory contains a registry of instancers for different types.
+    The Factory contains a registry of instancers for different types.
 
-	All instantiation of these rmlui types should go through the factory
-	so that scripting API's can bind in new types.
+    All instantiation of these rmlui types should go through the factory
+    so that scripting API's can bind in new types.
 
-	@author Lloyd Weehuizen
+    @author Lloyd Weehuizen
  */
 
-class RMLUICORE_API Factory
-{
+class RMLUICORE_API Factory {
 public:
 	/// Initialise the element factory
 	static bool Initialise();
@@ -78,8 +80,9 @@ public:
 	static void RegisterContextInstancer(ContextInstancer* instancer);
 	/// Instances a new context.
 	/// @param[in] name The name of the new context.
+	/// @param[in] render_manager The render manager used for the new context.
 	/// @return The new context, or nullptr if no context could be created.
-	static ContextPtr InstanceContext(const String& name);
+	static ContextPtr InstanceContext(const String& name, RenderManager* render_manager);
 
 	/// Registers a non-owning pointer to the element instancer that will be used to instance an element when the specified tag is encountered.
 	/// @param[in] name Name of the instancer; elements with this as their tag will use this instancer.
@@ -126,6 +129,17 @@ public:
 	/// @param[in] name The name of the desired decorator type.
 	/// @return The decorator instancer it it exists, nullptr otherwise.
 	static DecoratorInstancer* GetDecoratorInstancer(const String& name);
+
+	/// Registers a non-owning pointer to an instancer that will be used to instance filters.
+	/// @param[in] name The name of the filter the instancer will be called for.
+	/// @param[in] instancer The instancer to call when the filter name is encountered.
+	/// @lifetime The instancer must be kept alive until after the call to Rml::Shutdown.
+	/// @return The added instancer if the registration was successful, nullptr otherwise.
+	static void RegisterFilterInstancer(const String& name, FilterInstancer* instancer);
+	/// Retrieves a filter instancer registered with the factory.
+	/// @param[in] name The name of the desired filter type.
+	/// @return The filter instancer it it exists, nullptr otherwise.
+	static FilterInstancer* GetFilterInstancer(const String& name);
 
 	/// Registers a non-owning pointer to an instancer that will be used to instance font effects.
 	/// @param[in] name The name of the font effect the instancer will be called for.

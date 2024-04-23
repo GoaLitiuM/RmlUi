@@ -4,7 +4,7 @@
  * For the latest information, see http://github.com/mikke89/RmlUi
  *
  * Copyright (c) 2008-2010 CodePoint Ltd, Shift Technology Ltd
- * Copyright (c) 2019 The RmlUi Team, and contributors
+ * Copyright (c) 2019-2023 The RmlUi Team, and contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -15,7 +15,7 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,49 +26,46 @@
  *
  */
 
-#ifndef RMLUI_CORE_ELEMENTS_DATAFORMATTER_H
-#define RMLUI_CORE_ELEMENTS_DATAFORMATTER_H
+#ifndef RMLUI_CORE_COMPILEDFILTERSHADER_H
+#define RMLUI_CORE_COMPILEDFILTERSHADER_H
 
-#include "../Types.h"
-#include "../ScriptInterface.h"
-#include "../Header.h"
+#include "Header.h"
+#include "UniqueRenderResource.h"
 
 namespace Rml {
 
+class RenderManager;
+
 /**
-	Abstract base class for a data formatter. A data formatter takes raw data
-	and processes it into a final string. They are usually used in conjunction
-	with a data source and a datagrid.
-
-	@author Robert Curry
+    A compiled filter to be applied during layer pop in its render manager. A unique resource constructed through the render manager.
  */
-
-class RMLUICORE_API DataFormatter
-{
+class RMLUICORE_API CompiledFilter final : public UniqueRenderResource<CompiledFilter, CompiledFilterHandle, CompiledFilterHandle(0)> {
 public:
-	DataFormatter(const String& name = "");
-	virtual ~DataFormatter();
+	CompiledFilter() = default;
 
-	/// Returns the name by which this data formatter is referenced by.
-	/// @return The name of this data formatter.
-	const String& GetDataFormatterName();
-	/// Returns a data formatter with the given name.
-	/// @parameter [in] data_formatter_name The name of the data formatter to
-	/// be returned.
-	/// @return If the data formatter with the specified name has been
-	/// constructed, a pointer to it will be returned. Otherwise, nullptr.
-	static DataFormatter* GetDataFormatter(const String& data_formatter_name);
+	void AddHandleTo(FilterHandleList& list);
 
-	/// Formats the raw results of a data source request into RML.
-	/// @param[out] formatted_data The formatted RML.
-	/// @param[in] raw_data A list of the raw data fields.
-	virtual void FormatData(String& formatted_data, const StringList& raw_data) = 0;
-
-	virtual void* GetScriptObject() const;
+	void Release();
 
 private:
-	String name;
+	CompiledFilter(RenderManager* render_manager, CompiledFilterHandle resource_handle) : UniqueRenderResource(render_manager, resource_handle) {}
+	friend class RenderManager;
+};
+
+/**
+    A compiled shader to be used when rendering geometry. A unique resource constructed through the render manager.
+ */
+class RMLUICORE_API CompiledShader final : public UniqueRenderResource<CompiledShader, CompiledShaderHandle, CompiledShaderHandle(0)> {
+public:
+	CompiledShader() = default;
+
+	void Release();
+
+private:
+	CompiledShader(RenderManager* render_manager, CompiledShaderHandle resource_handle) : UniqueRenderResource(render_manager, resource_handle) {}
+	friend class RenderManager;
 };
 
 } // namespace Rml
+
 #endif

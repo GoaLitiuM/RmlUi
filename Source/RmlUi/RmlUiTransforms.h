@@ -49,7 +49,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiUnresolvedPrimi
     {
     }
 
-    RmlUiUnresolvedPrimitiveFloat(float number, Rml::Property::Unit unit)
+    RmlUiUnresolvedPrimitiveFloat(float number, Rml::Unit unit)
         : number(number), unit((RmlUiUnit)unit)
     {
     }
@@ -130,7 +130,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTransl
 
     RmlUiTransformTranslateX(float value, RmlUiUnit unit = RmlUiUnit::Px)
         : type(Rml::TransformPrimitive::Type::TRANSLATEX)
-        , x(value, (Rml::Property::Unit)unit)
+        , x(value, (Rml::Unit)unit)
     {
     }
 
@@ -157,7 +157,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTransl
 
     RmlUiTransformTranslateY(float value, RmlUiUnit unit = RmlUiUnit::Px)
         : type(Rml::TransformPrimitive::Type::TRANSLATEY)
-        , y(value, (Rml::Property::Unit)unit)
+        , y(value, (Rml::Unit)unit)
     {
     }
 
@@ -184,7 +184,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTransl
 
     RmlUiTransformTranslateZ(float value, RmlUiUnit unit = RmlUiUnit::Px)
         : type(Rml::TransformPrimitive::Type::TRANSLATEZ)
-        , z(value, (Rml::Property::Unit)unit)
+        , z(value, (Rml::Unit)unit)
     {
     }
 
@@ -211,7 +211,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTransl
 
     RmlUiTransformTranslate2D(float x, float y, RmlUiUnit unit = RmlUiUnit::Px)
         : type(Rml::TransformPrimitive::Type::TRANSLATE2D)
-        , x(x, (Rml::Property::Unit)unit), y(y, (Rml::Property::Unit)unit)
+        , x(x, (Rml::Unit)unit), y(y, (Rml::Unit)unit)
     {
     }
 
@@ -241,7 +241,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformTransl
 
     RmlUiTransformTranslate3D(float x, float y, float z, RmlUiUnit unit = RmlUiUnit::Px)
         : type(Rml::TransformPrimitive::Type::TRANSLATE3D)
-        , x(x, (Rml::Property::Unit)unit), y(y, (Rml::Property::Unit)unit), z(z, (Rml::Property::Unit)unit)
+        , x(x, (Rml::Unit)unit), y(y, (Rml::Unit)unit), z(z, (Rml::Unit)unit)
     {
     }
 
@@ -416,7 +416,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotate
 
     RmlUiTransformRotateX(float angle, RmlUiUnit unit = RmlUiUnit::Deg)
         : type(Rml::TransformPrimitive::Type::ROTATEX)
-        , rotate_x(angle, (Rml::Property::Unit)unit)
+        , rotate_x(angle, (Rml::Unit)unit)
     {
     }
 
@@ -449,7 +449,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotate
 
     RmlUiTransformRotateY(float angle, RmlUiUnit unit = RmlUiUnit::Deg)
         : type(Rml::TransformPrimitive::Type::ROTATEY)
-        , rotate_y(angle, (Rml::Property::Unit)unit)
+        , rotate_y(angle, (Rml::Unit)unit)
     {
     }
 
@@ -482,7 +482,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotate
 
     RmlUiTransformRotateZ(float angle, RmlUiUnit unit = RmlUiUnit::Deg)
         : type(Rml::TransformPrimitive::Type::ROTATEZ)
-        , rotate_z(angle, (Rml::Property::Unit)unit)
+        , rotate_z(angle, (Rml::Unit)unit)
     {
     }
 
@@ -515,7 +515,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotate
 
     RmlUiTransformRotate2D(float angle, RmlUiUnit unit = RmlUiUnit::Deg)
         : type(Rml::TransformPrimitive::Type::ROTATE2D)
-        , rotate_2d(angle, (Rml::Property::Unit)unit)
+        , rotate_2d(angle, (Rml::Unit)unit)
     {
     }
 
@@ -548,7 +548,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformRotate
     
     RmlUiTransformRotate3D(float x, float y, float z, float angle, RmlUiUnit angle_unit = RmlUiUnit::Deg)
         : type(Rml::TransformPrimitive::Type::ROTATE3D)
-        , rotate_3d(x, y, z, angle, (Rml::Property::Unit)angle_unit)
+        , rotate_3d(x, y, z, angle, (Rml::Unit)angle_unit)
     {
     }
     
@@ -590,7 +590,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkewX
 
     RmlUiTransformSkewX(float angle, RmlUiUnit unit = RmlUiUnit::Deg)
         : type(Rml::TransformPrimitive::Type::SKEWX)
-        , skew_x(angle, (Rml::Property::Unit)unit)
+        , skew_x(angle, (Rml::Unit)unit)
     {
     }
 
@@ -623,7 +623,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkewY
 
     RmlUiTransformSkewY(float angle, RmlUiUnit unit = RmlUiUnit::Deg)
         : type(Rml::TransformPrimitive::Type::SKEWY)
-        , skew_y(angle, (Rml::Property::Unit)unit)
+        , skew_y(angle, (Rml::Unit)unit)
     {
     }
 
@@ -656,7 +656,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformSkew2D
 
     RmlUiTransformSkew2D(float x, float y, RmlUiUnit angle_unit = RmlUiUnit::Deg)
         : type(Rml::TransformPrimitive::Type::SKEW2D)
-        , skew_2d(x, y, (Rml::Property::Unit)angle_unit)
+        , skew_2d(x, y, (Rml::Unit)angle_unit)
     {
     }
 
@@ -694,7 +694,7 @@ API_STRUCT(NoDefault, Namespace = "RmlUi") struct RMLUI_API RmlUiTransformPerspe
         : type(Rml::TransformPrimitive::Type::PERSPECTIVE)
     {
         perspective.values.at(0).number = angle;
-        perspective.values.at(0).unit = (Rml::Property::Unit)unit;
+        perspective.values.at(0).unit = (Rml::Unit)unit;
     }
 
 private:

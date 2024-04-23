@@ -4,7 +4,6 @@
  * For the latest information, see http://github.com/mikke89/RmlUi
  *
  * Copyright (c) 2008-2010 CodePoint Ltd, Shift Technology Ltd
- * Copyright (c) 2019 The RmlUi Team, and contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -15,7 +14,7 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,35 +25,24 @@
  *
  */
 
-#ifndef RMLUI_CORE_ELEMENTS_ELEMENTDATAGRIDCELL_H
-#define RMLUI_CORE_ELEMENTS_ELEMENTDATAGRIDCELL_H
+#ifndef RMLUI_CORE_FONTMETRICS_H
+#define RMLUI_CORE_FONTMETRICS_H
 
-#include "../Element.h"
-#include "../EventListener.h"
-#include "../Header.h"
+#include "Header.h"
 
 namespace Rml {
 
-/**
-	The class for cells inside a data table row.
+struct FontMetrics {
+	int size;                  // Specified font size [px].
 
-	@author Robert Curry
- */
+	float ascent;              // Distance above the baseline to the upper grid coordinate [px, positive above baseline].
+	float descent;             // Distance below the baseline to the lower grid coordinate [px, positive below baseline].
+	float line_spacing;        // Font-specified distance between two consecutive baselines [px].
 
-class RMLUICORE_API ElementDataGridCell : public Element
-{
-public:
-	RMLUI_RTTI_DefineWithParent(ElementDataGridCell, Element)
+	float x_height;            // Height of the lowercase 'x' character [px].
 
-	ElementDataGridCell(const String& tag);
-	virtual ~ElementDataGridCell();
-
-	void Initialise(int column, Element* header);
-	int GetColumn();
-	
-private:
-	int column;
-	Element* header;
+	float underline_position;  // Position of the underline relative to the baseline [px, positive below baseline].
+	float underline_thickness; // Width of underline [px].
 };
 
 } // namespace Rml

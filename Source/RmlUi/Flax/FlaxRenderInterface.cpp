@@ -51,8 +51,7 @@ public:
         : reserved(true)
         , vertexBuffer(512, sizeof(BasicVertex), TEXT("RmlUI.VB"))
         , indexBuffer(64, sizeof(uint32), TEXT("RmlUI.IB"))
-        , texture(nullptr)
-        , isFont(false)
+        //, isFont(false)
     {
     }
 
@@ -64,7 +63,6 @@ public:
     void Dispose(bool preserveBuffers = true)
     {
         reserved = false;
-        texture = nullptr;
         if (preserveBuffers)
         {
             vertexBuffer.Clear();
@@ -75,14 +73,13 @@ public:
             vertexBuffer.Dispose();
             indexBuffer.Dispose();
         }
-        isFont = false;
+        //isFont = false;
     }
 
     bool reserved;
     StaticVertexBuffer vertexBuffer;
     StaticIndexBuffer indexBuffer;
-    GPUTexture* texture;
-    bool isFont;
+    //bool isFont;
 };
 
 PACK_STRUCT(struct CustomData
@@ -135,7 +132,7 @@ CompiledGeometry* ReserveGeometry(Rml::CompiledGeometryHandle& geometryHandle)
     return geometry;
 }
 
-void ReleaseGeometry(Rml::CompiledGeometryHandle handle)
+void FlaxRenderInterface::ReleaseGeometry(Rml::CompiledGeometryHandle handle)
 {
     if ((int)handle == 0)
         return;
@@ -171,38 +168,29 @@ void FlaxRenderInterface::InvalidateShaders(Asset* obj)
     SAFE_DELETE_GPU_RESOURCE(ColorPipeline);
 }
 
-void FlaxRenderInterface::RenderGeometry(Rml::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rml::TextureHandle texture_handle, const Rml::Vector2f& translation)
-{
-    CompiledGeometry compiledGeometry;
-    CompileGeometry(&compiledGeometry, vertices, num_vertices, indices, num_indices, texture_handle);
-    RenderCompiledGeometry(&compiledGeometry, translation);
-}
 
-Rml::CompiledGeometryHandle FlaxRenderInterface::CompileGeometry(Rml::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rml::TextureHandle texture_handle)
+Rml::CompiledGeometryHandle FlaxRenderInterface::CompileGeometry(Rml::Span<const Rml::Vertex> vertices, Rml::Span<const int> indices)
 {
-#if DISABLE_GEOMETRY_COMPILATION
-    return {};
-#endif
 
     Rml::CompiledGeometryHandle geometryHandle;
     CompiledGeometry* compiledGeometry = ReserveGeometry(geometryHandle);
-    CompileGeometry(compiledGeometry, vertices, num_vertices, indices, num_indices, texture_handle);
+    CompileGeometry(compiledGeometry, vertices.begin(), (int)vertices.size(), indices.begin(), (int)vertices.size());
     return (Rml::CompiledGeometryHandle)geometryHandle;
 }
 
-void FlaxRenderInterface::CompileGeometry(CompiledGeometry* compiledGeometry, Rml::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rml::TextureHandle texture_handle)
+void FlaxRenderInterface::CompileGeometry(CompiledGeometry* compiledGeometry, const Rml::Vertex* vertices, int num_vertices, const int* indices, int num_indices)
 {
     PROFILE_GPU_CPU("RmlUi.CompileGeometry");
 
     const Rectangle defaultBounds(CurrentViewport.Location, CurrentViewport.Size);
     const RotatedRectangle defaultMask(defaultBounds);
 
-    compiledGeometry->texture = LoadedTextures.At((int32)texture_handle);
+    //compiledGeometry->texture = LoadedTextures.At((int32)texture_handle);
     compiledGeometry->vertexBuffer.Data.EnsureCapacity((int32)(num_vertices * sizeof(BasicVertex)));
     compiledGeometry->indexBuffer.Data.EnsureCapacity((int32)(num_indices * sizeof(uint32)));
 
     // FIXME: hacky way to detect if we are rendering text or images
-    compiledGeometry->isFont = FontTextures.Contains(compiledGeometry->texture);
+    //compiledGeometry->isFont = FontTextures.Contains(compiledGeometry->texture);
 
     for (int i = 0; i < num_vertices; i++)
     {
@@ -219,16 +207,16 @@ void FlaxRenderInterface::CompileGeometry(CompiledGeometry* compiledGeometry, Rm
         compiledGeometry->indexBuffer.Write((uint32)indices[i]);
 }
 
-void FlaxRenderInterface::RenderCompiledGeometry(Rml::CompiledGeometryHandle geometry, const Rml::Vector2f& translation)
+void FlaxRenderInterface::RenderGeometry(Rml::CompiledGeometryHandle geometry, Rml::Vector2f translation, Rml::TextureHandle texture)
 {
     CompiledGeometry* compiledGeometry = GeometryCache[(int)geometry];
     if (compiledGeometry == nullptr)
         return;
 
-    RenderCompiledGeometry(compiledGeometry, translation);
+    RenderCompiledGeometry(compiledGeometry, translation, texture);
 }
 
-void FlaxRenderInterface::RenderCompiledGeometry(CompiledGeometry* compiledGeometry, const Rml::Vector2f& translation)
+void FlaxRenderInterface::RenderCompiledGeometry(CompiledGeometry* compiledGeometry, const Rml::Vector2f& translation, Rml::TextureHandle texture_handle)
 {
     PROFILE_GPU_CPU("RmlUi.RenderCompiledGeometry");
 
@@ -274,12 +262,13 @@ void FlaxRenderInterface::RenderCompiledGeometry(CompiledGeometry* compiledGeome
             return;
         }
     }
+    auto texture = LoadedTextures.At((int32)texture_handle);
 
     GPUPipelineState* pipeline;
-    if (compiledGeometry->texture == nullptr)
+    if (texture == nullptr)
         pipeline = ColorPipeline;
-    else if (compiledGeometry->isFont)
-        pipeline = FontPipeline;
+    /*else if (compiledGeometry->isFont)
+        pipeline = FontPipeline;*/
     else
         pipeline = ImagePipeline;
     GPUConstantBuffer* constantBuffer = BasicShader->GetShader()->GetCB(0);
@@ -306,8 +295,8 @@ void FlaxRenderInterface::RenderCompiledGeometry(CompiledGeometry* compiledGeome
 
     // State and bindings
     CurrentGPUContext->BindCB(0, constantBuffer);
-    if (compiledGeometry->texture != nullptr)
-        CurrentGPUContext->BindSR(0, compiledGeometry->texture);
+    if (texture != nullptr)
+        CurrentGPUContext->BindSR(0, texture);
     CurrentGPUContext->BindVB(Span<GPUBuffer*>(&vb, 1));
     CurrentGPUContext->BindIB(ib);
     CurrentGPUContext->SetState(pipeline);
@@ -315,22 +304,26 @@ void FlaxRenderInterface::RenderCompiledGeometry(CompiledGeometry* compiledGeome
     CurrentGPUContext->DrawIndexed(compiledGeometry->indexBuffer.Data.Count() / sizeof(uint32));
 }
 
-void FlaxRenderInterface::ReleaseCompiledGeometry(Rml::CompiledGeometryHandle geometry)
-{
-    ReleaseGeometry(geometry);
-}
 
 void FlaxRenderInterface::EnableScissorRegion(bool enable)
 {
     UseScissor = enable;
 }
 
-void FlaxRenderInterface::SetScissorRegion(int x, int y, int width, int height)
+void FlaxRenderInterface::SetScissorRegion(Rml::Rectanglei region)
 {
-    CurrentScissor = Rectangle((float)x, (float)y, (float)width, (float)height);
+    CurrentScissor = Rectangle((float)region.Position().x, (float)region.Position().y, (float)region.Size().x, (float)region.Size().y);
 }
 
-bool FlaxRenderInterface::LoadTexture(Rml::TextureHandle& texture_handle, Rml::Vector2i& texture_dimensions, const Rml::String& source)
+void FlaxRenderInterface::EnableClipMask(bool enable)
+{
+}
+
+void FlaxRenderInterface::RenderToClipMask(Rml::ClipMaskOperation mask_operation, Rml::CompiledGeometryHandle geometry, Rml::Vector2f translation)
+{
+}
+
+Rml::TextureHandle FlaxRenderInterface::LoadTexture(Rml::Vector2i& texture_dimensions, const Rml::String& source)
 {
     String contentPath = String(StringUtils::GetPathWithoutExtension(String(source.c_str()))) + ASSET_FILES_EXTENSION_WITH_DOT;
     AssetReference<Texture> textureAsset = Content::Load<Texture>(contentPath);
@@ -344,35 +337,25 @@ bool FlaxRenderInterface::LoadTexture(Rml::TextureHandle& texture_handle, Rml::V
     texture_dimensions.x = (int)textureSize.X;
     texture_dimensions.y = (int)textureSize.Y;
 
-    texture_handle = RegisterTexture(texture);
-    return true;
+    return RegisterTexture(texture);
 }
 
-bool FlaxRenderInterface::GenerateTexture(Rml::TextureHandle& texture_handle, const Rml::byte* source, const Rml::Vector2i& source_dimensions)
+Rml::TextureHandle FlaxRenderInterface::GenerateTexture(Rml::Span<const Rml::byte> source_data, Rml::Vector2i source_dimensions)
 {
-#if !USE_RMLUI_6_0
-    if (AtlasGenerateTextureHandles.TryGet(source, texture_handle))
-    {
-        // Texture handle was allocated in the texture callback function earlier, pass it back to the caller
-        AtlasGenerateTextureHandles.Remove(source);
-        return true;
-    }
-#endif
-
     GPUTextureDescription desc = GPUTextureDescription::New2D(source_dimensions.x, source_dimensions.y, PixelFormat::B8G8R8A8_UNorm);
     GPUTexture*  texture = GPUDevice::Instance->CreateTexture();
     if (texture->Init(desc))
-        return false;
+        return (Rml::TextureHandle)nullptr;
 
-    texture_handle = RegisterTexture(texture);
+    auto texture_handle = RegisterTexture(texture);
     AllocatedTextures.Add(texture);
 
-    BytesContainer data(source, source_dimensions.x * source_dimensions.y * 4);
+    BytesContainer data(source_data.data(), (int)source_data.size());
     auto task = texture->UploadMipMapAsync(data, 0, true);
     if (task)
         task->Start();
 
-    return true;
+    return texture_handle;
 }
 
 void FlaxRenderInterface::ReleaseTexture(Rml::TextureHandle texture_handle)
@@ -390,6 +373,51 @@ void FlaxRenderInterface::SetTransform(const Rml::Matrix4f* transform_)
 {
     // We assume the library is not built with row-major matrices enabled
     CurrentTransform = transform_ != nullptr ? *(const Matrix*)transform_->data() : Matrix::Identity;
+}
+
+Rml::LayerHandle FlaxRenderInterface::PushLayer()
+{
+    return Rml::LayerHandle();
+}
+
+void FlaxRenderInterface::CompositeLayers(Rml::LayerHandle source, Rml::LayerHandle destination, Rml::BlendMode blend_mode, Rml::Span<const Rml::CompiledFilterHandle> filters)
+{
+}
+
+void FlaxRenderInterface::PopLayer()
+{
+}
+
+Rml::TextureHandle FlaxRenderInterface::SaveLayerAsTexture(Rml::Vector2i dimensions)
+{
+    return Rml::TextureHandle();
+}
+
+Rml::CompiledFilterHandle FlaxRenderInterface::SaveLayerAsMaskImage()
+{
+    return Rml::CompiledFilterHandle();
+}
+
+Rml::CompiledFilterHandle FlaxRenderInterface::CompileFilter(const Rml::String& name, const Rml::Dictionary& parameters)
+{
+    return Rml::CompiledFilterHandle();
+}
+
+void FlaxRenderInterface::ReleaseFilter(Rml::CompiledFilterHandle filter)
+{
+}
+
+Rml::CompiledShaderHandle FlaxRenderInterface::CompileShader(const Rml::String& name, const Rml::Dictionary& parameters)
+{
+    return Rml::CompiledShaderHandle();
+}
+
+void FlaxRenderInterface::RenderShader(Rml::CompiledShaderHandle shader_handle, Rml::CompiledGeometryHandle geometry_handle, Rml::Vector2f translation, Rml::TextureHandle texture)
+{
+}
+
+void FlaxRenderInterface::ReleaseShader(Rml::CompiledShaderHandle effect_handle)
+{
 }
 
 Viewport FlaxRenderInterface::GetViewport()
@@ -462,10 +490,3 @@ void FlaxRenderInterface::ReleaseResources()
     AllocatedTextures.ClearDelete();
     GeometryCache.ClearDelete();
 }
-
-#if !USE_RMLUI_6_0
-void FlaxRenderInterface::AddFontAtlasTextureHandle(Rml::TextureHandle handle, byte* textureData)
-{
-    AtlasGenerateTextureHandles.Add(textureData, handle);
-}
-#endif
