@@ -63,8 +63,11 @@ public:
     void End();
     void CompileGeometry(CompiledGeometry* compiledGeometry, const Rml::Vertex* vertices, int num_vertices, const int* indices, int num_indices);
     void RenderCompiledGeometry(CompiledGeometry* compiledGeometry, const Rml::Vector2f& translation, Rml::TextureHandle texture);
+    void HookGenerateTexture(Rml::TextureHandle textureHandle);
     Rml::TextureHandle GetTextureHandle(GPUTexture* texture);
     Rml::TextureHandle RegisterTexture(GPUTexture* texture, bool isFontTexture = false);
     void ReleaseResources();
-
+    
+private:
+    Rml::TextureHandle _generateTextureOverride;
 };

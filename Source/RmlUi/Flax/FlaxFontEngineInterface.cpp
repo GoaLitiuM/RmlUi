@@ -48,9 +48,9 @@ struct FontFace
 namespace
 {
     Array<AssetReference<FontTextureAtlas>> EffectAtlases(4);
-    Array<Rml::Texture> EffectAtlasTextures(4);
+    Array<Rml::CallbackTexture> EffectAtlasTextures(4);
     Array<Rml::String> EffectAtlasTextureNames(4);
-    Array<Rml::Texture> AtlasTextures(4);
+    Array<Rml::CallbackTexture> AtlasTextures(4);
     Array<Rml::String> AtlasTextureNames(4);
     Dictionary<StringAnsi, Array<FontFace>> FontFaces(32);
     StringAnsi FallbackFontFaceFamily;
@@ -350,7 +350,7 @@ int FlaxFontEngineInterface::GetStringWidth(Rml::FontFaceHandle handle, const Rm
     return (int)lineWidth;
 }
 
-bool FontAtlasTextureCallback(Rml::RenderInterface* render_interface, const Rml::String& name, Rml::TextureHandle& texture_handle, Rml::Vector2i& texture_dimensions)
+bool FontAtlasTextureCallback(const Rml::CallbackTextureInterface& texture_interface, const Rml::String& name)
 {
     // RmlUi requests data to be generated here, but we have already copied the glyph data to the texture earlier,
     // so we prepare the texture handle pointing to the atlas texture in this callback instead of generating anything.
@@ -370,15 +370,21 @@ bool FontAtlasTextureCallback(Rml::RenderInterface* render_interface, const Rml:
     if (atlas == nullptr)
         return false;
 
-    auto renderInterface = (FlaxRenderInterface*)render_interface;
+    FlaxRenderInterface* renderInterface = (FlaxRenderInterface*)Rml::GetRenderInterface();
     GPUTexture* texture = atlas->GetTexture();
-    texture_handle = renderInterface->GetTextureHandle(texture);
+    Rml::TextureHandle texture_handle = renderInterface->GetTextureHandle(texture);
     if (!texture_handle)
         texture_handle = renderInterface->RegisterTexture(texture, isFont);
 
     const Float2 atlasTextureSize = atlas->GetSize();
+    Rml::Vector2i texture_dimensions;
     texture_dimensions.x = (int)atlasTextureSize.X;
     texture_dimensions.y = (int)atlasTextureSize.Y;
+
+    // HACK: Avoid copying texture data by returning the previously generated texture in GenerateTexture
+    // instead of creating a new texture...
+    renderInterface->HookGenerateTexture(texture_handle);
+    texture_interface.GenerateTexture(Rml::Span<const Rml::byte>(), texture_dimensions);
 
 #if !USE_RMLUI_6_0
     // HACK: We are not going to copy any data to the atlas textures here, just allocate something
@@ -523,13 +529,13 @@ int FlaxFontEngineInterface::GenerateString(Rml::RenderManager& render_manager, 
                 fontAtlas->EnsureTextureCreated();
                 if (AtlasTextures.Count() <= fontAtlasIndex)
                 {
-
                     // Texture data already exists, the callback only assigns the correct handle pointing to this atlas
-                    /*auto texture = New<Rml::Texture>();
-                    texture->Set(GetAtlasTextureNameHandle(fontAtlasIndex), FontAtlasTextureCallback);
-                    
-                    AtlasTextures.Add(texture);*/
-                    AtlasTextures.Add(render_manager.LoadTexture(GetAtlasTextureNameHandle(fontAtlasIndex)));
+                    auto callback = [fontAtlasIndex](const Rml::CallbackTextureInterface& texture_interface) -> bool
+                        {
+                            return FontAtlasTextureCallback(texture_interface, GetAtlasTextureNameHandle(fontAtlasIndex));
+                        };
+                    auto texture = render_manager.MakeCallbackTexture(MoveTemp(callback));
+                    AtlasTextures.Add(MoveTemp(texture));
                 }
 
                 geometry = GetOrAddGeometrySlot(geometryMiddle, AtlasTextures[fontAtlasIndex]);
@@ -649,7 +655,12 @@ int FlaxFontEngineInterface::GenerateString(Rml::RenderManager& render_manager, 
                         EffectAtlases.Add(effectFontAtlas);
 
                         // Texture data already exists, the callback only assigns the correct handle pointing to this atlas
-                        EffectAtlasTextures.Add(render_manager.LoadTexture(GetEffectAtlasTextureNameHandle(effectAtlasIndex)));
+                        auto callback = [effectAtlasIndex](const Rml::CallbackTextureInterface& texture_interface) -> bool
+                            {
+                                return FontAtlasTextureCallback(texture_interface, GetEffectAtlasTextureNameHandle(effectAtlasIndex));
+                            };
+                        auto atlasTexture = render_manager.MakeCallbackTexture(MoveTemp(callback));
+                        EffectAtlasTextures.Add(MoveTemp(atlasTexture));
 
                         slot = effectFontAtlas->AddEntry(effectGlyphSize.x, effectGlyphSize.y, effectGlyphBytes);
                     }

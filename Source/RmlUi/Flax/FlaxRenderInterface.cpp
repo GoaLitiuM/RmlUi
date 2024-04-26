@@ -168,10 +168,8 @@ void FlaxRenderInterface::InvalidateShaders(Asset* obj)
     SAFE_DELETE_GPU_RESOURCE(ColorPipeline);
 }
 
-
 Rml::CompiledGeometryHandle FlaxRenderInterface::CompileGeometry(Rml::Span<const Rml::Vertex> vertices, Rml::Span<const int> indices)
 {
-
     Rml::CompiledGeometryHandle geometryHandle;
     CompiledGeometry* compiledGeometry = ReserveGeometry(geometryHandle);
     CompileGeometry(compiledGeometry, vertices.begin(), (int)vertices.size(), indices.begin(), (int)indices.size());
@@ -186,16 +184,11 @@ void FlaxRenderInterface::CompileGeometry(CompiledGeometry* compiledGeometry, co
     const Rectangle defaultBounds(CurrentViewport.Location, CurrentViewport.Size);
     const RotatedRectangle defaultMask(defaultBounds);
 
-    //compiledGeometry->texture = LoadedTextures.At((int32)texture_handle);
     compiledGeometry->vertexBuffer.Data.EnsureCapacity((int32)(num_vertices * sizeof(BasicVertex)));
     compiledGeometry->indexBuffer.Data.EnsureCapacity((int32)(num_indices * sizeof(uint32)));
 
-    // FIXME: hacky way to detect if we are rendering text or images
-    //compiledGeometry->isFont = FontTextures.Contains(compiledGeometry->texture);
-
     for (int i = 0; i < num_vertices; i++)
     {
-        auto rvert = vertices[i];
         BasicVertex vb0;
         vb0.Position = (Float2)vertices[i].position;
         vb0.TexCoord = Half2((Float2)vertices[i].tex_coord);
@@ -273,6 +266,7 @@ void FlaxRenderInterface::RenderCompiledGeometry(CompiledGeometry* compiledGeome
         pipeline = FontPipeline;
     else
         pipeline = ImagePipeline;
+
     GPUConstantBuffer* constantBuffer = BasicShader->GetShader()->GetCB(0);
     GPUBuffer* vb = compiledGeometry->vertexBuffer.GetBuffer();
     GPUBuffer* ib = compiledGeometry->indexBuffer.GetBuffer();
@@ -306,6 +300,10 @@ void FlaxRenderInterface::RenderCompiledGeometry(CompiledGeometry* compiledGeome
     CurrentGPUContext->DrawIndexed(compiledGeometry->indexBuffer.Data.Count() / sizeof(uint32));
 }
 
+void FlaxRenderInterface::HookGenerateTexture(Rml::TextureHandle textureHandle)
+{
+    _generateTextureOverride = textureHandle;
+}
 
 void FlaxRenderInterface::EnableScissorRegion(bool enable)
 {
@@ -350,12 +348,22 @@ Rml::TextureHandle FlaxRenderInterface::LoadTexture(Rml::Vector2i& texture_dimen
 Rml::TextureHandle FlaxRenderInterface::GenerateTexture(Rml::Span<const Rml::byte> source_data, Rml::Vector2i source_dimensions)
 {
     LOG(Info, "GenerateTexture");
+
+    Rml::TextureHandle texture_handle;
+    if (source_data.size() == 0 && _generateTextureOverride != 0)
+    {
+        // HACK: Return the previously generated texture handle here instead for font texture atlases...
+        texture_handle = _generateTextureOverride;
+        _generateTextureOverride = 0;
+        return texture_handle;
+    }
+
     GPUTextureDescription desc = GPUTextureDescription::New2D(source_dimensions.x, source_dimensions.y, PixelFormat::B8G8R8A8_UNorm);
     GPUTexture*  texture = GPUDevice::Instance->CreateTexture();
     if (texture->Init(desc))
         return (Rml::TextureHandle)nullptr;
 
-    auto texture_handle = RegisterTexture(texture);
+    texture_handle = RegisterTexture(texture);
     AllocatedTextures.Add(texture);
 
     BytesContainer data(source_data.data(), source_dimensions.x * source_dimensions.y * 4);
