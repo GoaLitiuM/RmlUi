@@ -333,7 +333,7 @@ void FlaxRenderInterface::SetScissorRegion(int x, int y, int width, int height)
 bool FlaxRenderInterface::LoadTexture(Rml::TextureHandle& texture_handle, Rml::Vector2i& texture_dimensions, const Rml::String& source)
 {
     String contentPath = String(StringUtils::GetPathWithoutExtension(String(source.c_str()))) + ASSET_FILES_EXTENSION_WITH_DOT;
-    AssetReference<Texture> textureAsset = Content::Load<Texture>(contentPath);
+    AssetReference<Texture> textureAsset = Content::LoadAsync<Texture>(contentPath);
     if (textureAsset == nullptr)
         return false;
 
