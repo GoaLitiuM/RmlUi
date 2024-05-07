@@ -87,10 +87,19 @@ public:
     /// </summary>
     static void DefocusCanvas(RmlUiCanvas* canvas);
 
+    /// <summary>
+    /// Registers input events for current window
+    /// </summary>
+    API_FUNCTION() static void RegisterWindowEvents();
+
+    /// <summary>
+    /// Unregisters input events for current window
+    /// </summary>
+    API_FUNCTION() static void UnregisterWindowEvents();
+
 private:
+    static void OnRegisterWindowEvents();
     static void RegisterEvents();
-    static void RegisterWindowEvents();
-    static void UnregisterEvents();
     static void OnCharInput(Char c);
     static void OnKeyDown(KeyboardKeys key);
     static void OnKeyUp(KeyboardKeys key);
